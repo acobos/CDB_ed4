@@ -45,14 +45,6 @@ If you are not familiar with concepts of statistical inference such as random sa
 - [Survival analysis 1: Kaplan-Meier estimates and log-rank test]()
 - [Survival analysis 2: Cox proportional hazards model]()
 
-
-
-
-
-
-
-- For an intuitive introduction to the bootstrap, see [this](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/).
-
 \
 
 ## Readings 
@@ -77,3 +69,4 @@ If you are not familiar with concepts of statistical inference such as random sa
 
 - [The Elements of statistical learning](https://hastie.su.domains/ElemStatLearn/), by T. Hastie, R. Tibshirani and J. Friedman. A very good book on both classical and modern modeling methods, such as random forest, support vector machines or neural networks. Freely available as pdf.
 
+- [Introduction to Bootstrapping in Statistics with an Example](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/). A short and intuitive introduction to the bootstrap.
