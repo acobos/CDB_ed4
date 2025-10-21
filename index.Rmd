@@ -17,30 +17,63 @@ knitr::opts_chunk$set(echo = FALSE,
 If you are not familiar with concepts of statistical inference such as random sampling, confidence intervals, or significance testing and p-values, I *highly* recommend [reading this](https://acobos.github.io/DA/statistical-inference.html) before the course starts. 
 
 
+## Analysis of categorical variables
 
-## Comparing groups
+- [Categorical variables, independents samples]()
+- [Categorical variables, paired samples]()
 
 
-- [A Student’s guide to R](https://cran.r-project.org/doc/contrib/Horton+Pruim+Kaplan_MOSAIC-StudentGuide.pdf): free book on introductory and intermediate statistics with R.
+## Analysis of quantitative variables
 
-- Do not use histograms to assess normality: [find out why](https://statisticsbyjim.com/basics/assessing-normality-histograms-probability-plots/).
+- [Quantitative variables, independents samples]()
+- [Quantitative variables, paired samples]()
+- [Analysis of variance]()
+- [Permutation tests and the bootstrap]()
+- [ROC curves and AUC]()
+
+## Association: [slides](https://acobos.github.io/CDB_ed2/4_0_association.html#1) or [reccomended reading](https://acobos.github.io/DA/assessing-relations.html)?
+
+## Statistical modelling
+
+- [General linear model: coefficients and GOF]()
+- [General linear model: model assumptions]()
+- [General linear model: confounding and interaction]()
+
+- [Logistic regression model 1]()
+- [Logistic regression model 2]()
+
+- [Survival analysis 1: Kaplan-Meier estimates and log-rank test]()
+- [Survival analysis 2: Cox proportional hazards model]()
+
+
+
+
+
+
 
 - For an intuitive introduction to the bootstrap, see [this](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/).
 
 \
 
-## Predictions
+## Readings 
 
-- [Survival analysis/plots cheat sheet](https://rpkgs.datanovia.com/survminer/survminer_cheatsheet.pdf)
+### General
 
-- [Regression modeling strategies](https://www.amazon.com/Regression-Modeling-Strategies-Applications-Statistics-dp-3319194240/dp/3319194240/ref=dp_ob_title_bk), by F.Harrell, is a _very_ good book on modeling (with R).
+- A couple of free online books this course is loosely based on:
+  - [Data Analysis for Clinical Researchers (Chap. 7 and 8)](https://acobos.github.io/DA/index.html). 
+  - [Statistical Modeling for Clinical Researchers](https://acobos.github.io/SM/index.html).
 
-- [Elements of statistical learning](https://hastie.su.domains/Papers/ESLII.pdf), by T. Hastie, R. Tibshirani and J. Friedman, is also a very good book on both classical and modern modeling methods, such as random forest, support vector machines or neural networks.
+- [A Student’s guide to R](https://cran.r-project.org/doc/contrib/Horton+Pruim+Kaplan_MOSAIC-StudentGuide.pdf): free book on introductory and intermediate statistics with R.  
 
-\
 
-## Miscellanea
+### Specific
+
+- Do not use histograms to assess normality: [find out why](https://statisticsbyjim.com/basics/assessing-normality-histograms-probability-plots/).
 
 - [Packages for ROC curves](https://rviews.rstudio.com/2019/03/01/some-r-packages-for-roc-curves/)
 
-- [Rmarkdown cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
+- [Survival analysis/plots cheat sheet](https://rpkgs.datanovia.com/survminer/survminer_cheatsheet.pdf)
+
+
+- [The Elements of statistical learning](https://hastie.su.domains/ElemStatLearn/), by T. Hastie, R. Tibshirani and J. Friedman. A very good book on both classical and modern modeling methods, such as random forest, support vector machines or neural networks. Freely available as pdf.
+
