@@ -1,0 +1,161 @@
+---
+title: "Categorical variables"
+subtitle: "Independent samples"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+```
+
+## Birth weights
+
+```{r}
+library(tidyverse)  # library(dplyr)
+
+d <- MASS::birthwt %>%
+  mutate(low = factor(low,   levels = 1:0, labels = c("low", "normal")),
+         race = factor(race, levels = 1:3, labels = c("white", "black", "other")),
+         smoke = factor(smoke, levels = 1:0, labels = c("smoker", "non-smoker")),
+         ht = factor(ht, levels = 1:0, labels = c("AHT", "no-AHT"))) %>% 
+  rename(bw = low)
+
+head(d)
+
+```
+
+
+## Birth weight related to smoking?
+
+```{r}
+bw_smoke <- mosaic::tally(bw ~ smoke, data = d)    # save for later use
+bw_smoke   
+
+mosaic::tally(bw ~ smoke, data = d, format="percent", margins = TRUE) %>% round(1)
+```
+
+
+## Chi-square test
+
+Use function `chisq.test()` on the contingency table of counts
+
+```{r}
+chisq.test(bw_smoke)  
+```
+
+\
+\
+
+Yates' continuity correction used by default in 2x2 tables. 
+
+If you prefer NOT to correct, then use argument `correct = FALSE`.
+
+
+## Expected frequencies
+
+- Chi-square test is not safe if *expected frequencies* are too low (e.g. < 5)
+    
+```{r}
+res <- chisq.test(bw_smoke)          # save test result (which is a list)
+names(res)                           # see names of list elements
+res$expected %>% round(1)            # get list element "expected" (and round it)
+```
+
+
+
+## Expected frequencies: warning when too low
+
+Now look at relation of birth weight and hypertension (`ht`)
+
+```{r warning=TRUE}
+bw_ht <- mosaic::tally(bw ~ ht, data = d); bw_ht
+chisq.test(bw_ht)
+```
+
+
+## Fisher's test
+
+Better when expected frequencies are low
+
+```{r}
+fisher.test(bw_ht)
+```
+
+
+## How strong is the association?
+
+You MUST provide some measure of association measure, and 95% CI
+
+Choose one, depending on the study *design*:
+
+Design           Measures
+---------------  ---------------------------------------------------------------------------------------
+Clinical trial   Risk difference (RD), Relative risk (RR), Odds ratio (OR), Number needed to treat (NNT)
+Cross-sectional  Risk difference (RD), Relative risk (RR), Odds ratio (OR)
+Cohort           Risk difference (RD), Relative risk (RR), Odds ratio (OR)
+Case-control     Odds ratio (OR)
+---------------  ---------------------------------------------------------------------------------------
+    
+## Measures of association
+
+`Epi::twoby2()` is very convenient, but will asume that:
+
+- the outcome variable is in the *columns* of the table
+- the category of interest is the *first* column, and 
+- the comparison will be done by computing the *first row minus (or over) the second row*.
+
+
+```{r}
+bw_smoke
+```
+
+This *is not* the table we need!  Let's transpose it with `t()`...
+
+## Measures of association
+
+```{r}
+bw_smoke %>% t() %>% Epi::twoby2()             
+
+```
+
+
+## Extracting the desired measure
+
+```{r}
+res <- bw_smoke %>% t() %>% Epi::twoby2(print = FALSE)   
+res$measures[-2,]                  # getting all rows but the second (and all cols)
+res$measures[1,]                   # getting the 1st row only  (and all cols)
+res$measures[1,1]                  # getting the 1st row, 1st col 
+
+```
+
+## Exercise
+
+Is low weight at birth related to race? 
+
+1. Answer the question based on the result of a test
+
+2. Compute the RR (95% CI) for the probability of low weight in:
+
+    - black vs white
+    - other vs white
+    
+
+3. What if you merge levels `black` and `other` into a single category?  
+Use the following code and repeat the analysis with `race_2`:
+
+```{r }
+d <- mutate(d, race_2 = ifelse(d$race == "white", "white", "black/other"))
+```
+
+
+
+
