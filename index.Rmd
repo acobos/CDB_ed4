@@ -1,0 +1,46 @@
+---
+title: "Stats with R for Clinical Reserachers"
+author: "Albert Cobos (acoboscarbo@gmail.com)"
+date: "28-10-2025"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      comment = NA)
+
+```
+
+If you are not familiar with concepts of statistical inference such as random sampling, confidence intervals, or significance testing and p-values, I *highly* recommend [reading this](https://acobos.github.io/DA/statistical-inference.html) before the course starts. 
+
+
+
+## Comparing groups
+
+
+- [A Student’s guide to R](https://cran.r-project.org/doc/contrib/Horton+Pruim+Kaplan_MOSAIC-StudentGuide.pdf): free book on introductory and intermediate statistics with R.
+
+- Do not use histograms to assess normality: [find out why](https://statisticsbyjim.com/basics/assessing-normality-histograms-probability-plots/).
+
+- For an intuitive introduction to the bootstrap, see [this](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/).
+
+\
+
+## Predictions
+
+- [Survival analysis/plots cheat sheet](https://rpkgs.datanovia.com/survminer/survminer_cheatsheet.pdf)
+
+- [Regression modeling strategies](https://www.amazon.com/Regression-Modeling-Strategies-Applications-Statistics-dp-3319194240/dp/3319194240/ref=dp_ob_title_bk), by F.Harrell, is a _very_ good book on modeling (with R).
+
+- [Elements of statistical learning](https://hastie.su.domains/Papers/ESLII.pdf), by T. Hastie, R. Tibshirani and J. Friedman, is also a very good book on both classical and modern modeling methods, such as random forest, support vector machines or neural networks.
+
+\
+
+## Miscellanea
+
+- [Packages for ROC curves](https://rviews.rstudio.com/2019/03/01/some-r-packages-for-roc-curves/)
+
+- [Rmarkdown cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
