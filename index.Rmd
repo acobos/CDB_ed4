@@ -34,25 +34,31 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 
 ## Analysis of quantitative variables
 
-- [Quantitative variables, independents samples]()
-- [Quantitative variables, paired samples]()
-- [Analysis of variance]()
-- [Permutation tests and the bootstrap]()
-- [ROC curves and AUC]()
+|  |  |
+|------------------------------------|------------------------------------|
+| [Quantitative variables, independents samples]()  |  |
+| [Quantitative variables, paired samples]()  |  |
+| [Analysis of variance]()  |  |
+| [Permutation tests and the bootstrap]()  |  |
+| [ROC curves and AUC]()  |  |
+
+
 
 ## Association: [slides](https://acobos.github.io/CDB_ed2/4_0_association.html#1) or [recommended reading](https://acobos.github.io/DA/assessing-relations.html)?
 
+\
+
 ## Statistical modelling
 
-- [General linear model: coefficients and GOF]()
-- [General linear model: model assumptions]()
-- [General linear model: confounding and interaction]()
-
-- [Logistic regression model 1]()
-- [Logistic regression model 2]()
-
-- [Survival analysis 1: Kaplan-Meier estimates and log-rank test]()
-- [Survival analysis 2: Cox proportional hazards model]()
+|  |  |
+|------------------------------------|------------------------------------|
+| [General linear model: coefficients and GOF]() |  |
+| [General linear model: model assumptions]() |  |
+| [General linear model: confounding and interaction]() |  |
+| [Logistic regression model 1]() |  |
+| [Logistic regression model 2]() |  |
+| [Survival analysis 1: Kaplan-Meier estimates and log-rank test]() |  |
+| [Survival analysis 2: Cox proportional hazards model]() |  |
 
 \
 
