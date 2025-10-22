@@ -1,5 +1,5 @@
 ---
-title: "Stats with R for Clinical Reserachers"
+title: "Stats with R for Clinical Researchers"
 author: "Albert Cobos (acoboscarbo@gmail.com)"
 date: "28-10-2025"
 output: html_document
@@ -17,10 +17,8 @@ knitr::opts_chunk$set(echo = FALSE,
 \
 \
 
-If you are not familiar with concepts of statistical inference such as random sampling, confidence intervals, or significance testing and p-values, I *highly* recommend [reading this](https://acobos.github.io/DA/statistical-inference.html) before the course starts. 
+Recommended pre-course reading: [Statistical Inference](https://acobos.github.io/DA/statistical-inference.html).
 
-\
-\
 \
 \
 
@@ -29,10 +27,10 @@ If you are not familiar with concepts of statistical inference such as random sa
 
 |  |  |
 |------------------------------------|------------------------------------|
-| [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1) |Solution to [exes](1_1_categ_indep_exe_solution.R)  |
-| [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1)
-- [Categorical variables, paired samples]()  |  |
+| [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1) |Solution to [exes](1_1_categ_indep_exe_solution.R)  |  | 
+[Categorical variables, paired samples](https://acobos.github.io/CDB_ed2/4_2_categ_paired.html)  |Solution to [exes](https://acobos.github.io/CDB_ed2/4_2_categ_paired_exe_solution.R)  |
 
+\
 
 ## Analysis of quantitative variables
 
@@ -42,7 +40,7 @@ If you are not familiar with concepts of statistical inference such as random sa
 - [Permutation tests and the bootstrap]()
 - [ROC curves and AUC]()
 
-## Association: [slides](https://acobos.github.io/CDB_ed2/4_0_association.html#1) or [reccomended reading](https://acobos.github.io/DA/assessing-relations.html)?
+## Association: [slides](https://acobos.github.io/CDB_ed2/4_0_association.html#1) or [recommended reading](https://acobos.github.io/DA/assessing-relations.html)?
 
 ## Statistical modelling
 
