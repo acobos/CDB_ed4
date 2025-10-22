@@ -14,13 +14,24 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```
 
+\
+\
+
 If you are not familiar with concepts of statistical inference such as random sampling, confidence intervals, or significance testing and p-values, I *highly* recommend [reading this](https://acobos.github.io/DA/statistical-inference.html) before the course starts. 
+
+\
+\
+\
+\
 
 
 ## Analysis of categorical variables
 
-- [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1)
-- [Categorical variables, paired samples]()
+|  |  |
+|------------------------------------|------------------------------------|
+| [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1) |Solution to [exes](1_1_categ_indep_exe_solution.R)  |
+| [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1)
+- [Categorical variables, paired samples]()  |  |
 
 
 ## Analysis of quantitative variables
