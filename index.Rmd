@@ -19,7 +19,7 @@ If you are not familiar with concepts of statistical inference such as random sa
 
 ## Analysis of categorical variables
 
-- [Categorical variables, independents samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1)
+- [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1)
 - [Categorical variables, paired samples]()
 
 
