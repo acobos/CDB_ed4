@@ -28,7 +28,7 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 |  |  |
 |------------------------------------|------------------------------------|
 | [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1) |Solution to [exes](1_1_categ_indep_exe_solution.R)  |  | 
-[Categorical variables, paired samples](https://acobos.github.io/CDB_ed2/4_2_categ_paired.html)  |Solution to [exes](https://acobos.github.io/CDB_ed2/1_2_categ_paired_exe_solution.R)  |
+[Categorical variables, paired samples](https://acobos.github.io/CDB_ed2/4_2_categ_paired.html)  |Solution to [exes](1_2_categ_paired_exe_solution.R)  |
 
 \
 
