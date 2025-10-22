@@ -1,0 +1,145 @@
+---
+title: "Categorical variables"
+subtitle: "Paired samples"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+```
+
+## Paired data
+
+A study comparing the physician's opinion and recommendations made by a clinical decision support system (`CDSS`), on the need of lipid lowering drugs (LLD) in 500 hypercholesterolemic patients
+
+```{r}
+d <- rio::import("https://raw.githubusercontent.com/acobos/Datasets/master/OptimCare.txt")
+head(d)
+```
+
+Both the `CDSS` and the `Physician` assessed the need of LLD (as `Yes` or `No`)
+
+## McNemar's test 
+
+Compares the two table margins, i.e., the *marginal homogeneity*
+
+```{r}
+library(mosaic)
+x <- tally(CDSS ~ Physician, data=d)  
+addmargins(x)   # to show margins (Sum) of the contingency table 
+```
+
+Proportion of `Yes`:
+
+- Physician: $\quad$ 287 / 500 = 0.574
+- CDSS:  $\qquad$ 234 / 500 = 0.468
+
+## McNemar's test 
+
+```{r}
+mcnemar.test(x, correct = FALSE)  
+mcnemar.test(x)         
+```
+
+Use correction if number of discrepant results is low (e.g., < 10)
+
+## Agreement: observed and expected (by chance)
+
+```{r echo=FALSE}
+library(epiR)
+round(chisq.test(x)$expected,1) -> e
+
+list(observed = x,
+     expected = e)
+
+round(epi.kappa(x)$prop,3) -> ag
+
+```
+
+- $P_o$ =  (`r x[1,1]` + `r x[2,2]`) / 500 = `r ag$obs`
+- $P_e$ = (`r e[1,1]` + `r e[2,2]`) / 500 = `r ag$exp`
+
+## Cohen's kappa
+
+$\kappa = \frac{P_o - P_e}{1 - P_e} \quad$ = 
+(`r ag$obs` - `r ag$exp`) / (1 - `r ag$exp`) = `r round(epi.kappa(x)$kappa[1],3)`
+
+```{r echo=FALSE, fig.width=8}
+library(epiR)
+# epi.kappa(x)$prop
+# epi.kappa(x)$kappa
+
+epi.kappa(x)$prop -> k
+
+barplot(k$obs, beside = FALSE, 
+        xlim = 0:1, ylim = 0:1, width=.2, las=1)
+
+text("observed", x= 0.32, y = k$obs, adj=0)
+arrows(0, k$obs, 0.3, k$obs, code = 0, lty=2)
+arrows(0.48, k$obs, 1, k$obs, code = 0, lty=2)
+# abline(h = k$obs, lty=2)
+
+
+text("expected", x= 0.32, y = k$exp, adj=0)
+arrows(0, k$exp, 0.3, k$exp, code = 0, lty=2)
+arrows(0.48, k$exp, 1, k$exp, code = 0, lty=2)
+# abline(h = k$exp, lty=2)
+
+arrows(0, 1, 1, 1, code = 0, lty=2)
+# abline(h = 1, lty=2)
+
+arrows(0.7, k$exp, 0.7, k$obs, code = 3, length=0.15)
+arrows(0.75, k$exp, 0.75, 1, code = 3, length=0.15)
+
+axis(side=4, at = c(k$exp,1), labels = c(0,1), las=1)
+
+text("Po-Pe", x= 0.7, y = k$exp + (k$obs-k$exp)/2, pos=2)
+text("1-Pe", x= 0.75, y = k$exp + (k$obs-k$exp)/2, pos=4)
+
+```
+
+## Cohen's kappa {.smaller}
+
+Function `epi.kappa()` in package `epiR`
+
+```{r}
+library(epiR)
+res <- epi.kappa(x)    # x is the contingency table computed previously
+names(res)
+res$prop.agree         # proportions of observed and expected agreement
+res$kappa              # kappa (est) and CI (lower, upper)
+```
+
+
+## Exercise 
+
+- BTA test vs cytology in diagnosis or follow-up of bladder cancer patients
+- Reference standard: cystoscopy
+
+```{r}
+d <- rio::import("data/bta.xls")
+head(d)
+```
+
+## Exercise (cont.)
+
+Using cystoscopy as the reference standard:
+
+- Compute sensitivity and specificity of the BTA test 
+
+- Compute sensitivity and specificity of cytology 
+
+- Do these procedures have equal sensitivity?
+
+- Do they have equal specificity?
+
+- To what extend the results of both procedures agree?
+
