@@ -1,0 +1,148 @@
+---
+title: "Quantitative variables"
+subtitle: "Paired samples"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+
+# library(pander)
+```
+
+## Weight and smoking cessation
+
+```{r echo=TRUE}
+d <- rio::import("data/smoking_cessation.txt")
+head(d)
+```
+
+Is there a change in weight after smoking cessation?
+
+We want to compare weight `pre`- and `pos`-smoking cessation
+
+
+## Tests to compare two paired distributions {.smaller}
+
+If distribution of *individual differences* is about normal$^1$: $\quad$ parametric test
+
+- paired, or one-sample *t*-test
+
+Otherwise: $\quad$ Distribution-free ("non-parametric") tests
+
+- Wilcoxon signed ranks test
+
+</br>
+
+$^1$ In practice, parametric test works well if:  
+- distribution of *individual differences* is (approximately) symmetrical  
+- no *influential* outliers
+
+which can be inspected in a boxplot.
+
+\ 
+
+Paired tests are based on the *individual differences*.
+
+## Paired data and individual differences
+
+The mean of individual differences = difference of means
+
+```{r}
+library(tidyverse)
+d <- mutate(d, change = pos - pre)   # compute individual differences
+head(d, 3)
+sapply(d, mean)                      # to get the mean of all variables in d
+```
+
+``r paste0(mean(d$pos), " - ", mean(d$pre), " = ", mean(d$pos) - mean(d$pre))``
+
+
+## Boxplot (with mean overlaid)
+
+```{r echo = TRUE, fig.height=1, fig.align='center'}
+library(ggformula)
+gf_boxplot(change ~ "", data = d, xlab = "", ylab = "change = pos - pre") %>% 
+  gf_summary(fun = mean, geom = "point", color = "red") %>% 
+  gf_refine(coord_flip())
+
+```
+
+In this case:
+
+- distribution is  (approximately) symmetrical
+
+- a single outlier in smokers, but not influential (mean $\approx$ median)
+
+Parametric test is OK
+
+## Paired, or one-sample *t*-test {.smaller}
+
+```{r}
+t.test(d$change)                               # one-sample t-test on the differences
+t.test(d$pos, d$pre, paired = TRUE)            # paired t-test on pos vs pre
+```
+
+## When conditions for the *t*-test are not met
+
+Murder rates (per 100000 inhabitants) by gender in 198 countries
+
+```{r }
+load("data/murder_rates.RData")
+head(d)
+```
+
+</br>
+
+source:  https://www.gapminder.org/data/
+
+
+## Differences in rates (men - women)
+
+```{r}
+d$difference <- d$men - d$women    # compute country differences to plot them
+```
+
+
+```{r echo=FALSE, fig.height=1.5}
+gf_boxplot(difference ~ "", data=d, xlab="", ylab="difference (men - women)") +
+  stat_summary(fun.y=mean, geom="point", color="red") +
+  coord_flip()
+```
+
+In this case:
+
+- distribution is  clearly assymmetrical
+
+- several outliers, with influence (mean > median)
+
+Distribution-free test (Wilcoxon signed ranks test)
+
+## Wilcoxon signed ranks test
+
+```{r}
+wilcox.test(d$difference)
+```
+
+## Exercise
+
+Read [this file](https://raw.githubusercontent.com/acobos/Datasets/master/Life_Expectancy_with_continent.csv). This should be the first 6 lines of the resulting dataframe:
+
+```{r echo = FALSE}
+d <- rio::import("https://raw.githubusercontent.com/acobos/Datasets/master/Life_Expectancy_with_continent.csv")
+head(d)
+```
+
+Try to answer these questions:
+
+1. Is life expectancy the same for men and women?
+
+2. Provide some estimate of the difference
+
