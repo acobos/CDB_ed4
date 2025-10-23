@@ -27,14 +27,31 @@ head(d)
 
 Both the `CDSS` and the `Physician` assessed the need of LLD (as `Yes` or `No`)
 
+
+## Paired data
+
+Two questions of possible interest:
+
+1. Are the CDSS and the physician equally prone to prescribe LLD?
+
+2. How well do they agree?
+
+\ 
+
+Answers:
+
+1. McNemar's test
+
+2. Cohen's kappa (measure of agreement)
+
+
 ## McNemar's test 
 
 Compares the two table margins, i.e., the *marginal homogeneity*
 
 ```{r}
-library(mosaic)
-x <- tally(CDSS ~ Physician, data=d)  
-addmargins(x)   # to show margins (Sum) of the contingency table 
+cdss_phy <- mosaic::tally(CDSS ~ Physician, data=d)  
+addmargins(cdss_phy)   # to show margins (Sum) of the contingency table 
 ```
 
 Proportion of `Yes`:
@@ -45,39 +62,45 @@ Proportion of `Yes`:
 ## McNemar's test 
 
 ```{r}
-mcnemar.test(x, correct = FALSE)  
-mcnemar.test(x)         
+mcnemar.test(cdss_phy)         
 ```
 
-Use correction if number of discrepant results is low (e.g., < 10)
+\
+\
+The low p-value provides evidence of marginal *heterogeneity*, which implies a different probability of prescribing LLD by the CDSS and the physician.
 
-## Agreement: observed and expected (by chance)
+\
+
+The test may NOT be valid if there very few discrepant results (e.g. < 10).
+
+
+## Agreement: observed and expected by chance
 
 ```{r echo=FALSE}
 library(epiR)
-round(chisq.test(x)$expected,1) -> e
+round(chisq.test(cdss_phy)$expected,1) -> e
 
-list(observed = x,
+list(observed = cdss_phy,
      expected = e)
 
-round(epi.kappa(x)$prop,3) -> ag
+round(epi.kappa(cdss_phy)$prop,3) -> ag
 
 ```
 
-- $P_o$ =  (`r x[1,1]` + `r x[2,2]`) / 500 = `r ag$obs`
+- $P_o$ =  (`r cdss_phy[1,1]` + `r cdss_phy[2,2]`) / 500 = `r ag$obs`
 - $P_e$ = (`r e[1,1]` + `r e[2,2]`) / 500 = `r ag$exp`
 
 ## Cohen's kappa
 
 $\kappa = \frac{P_o - P_e}{1 - P_e} \quad$ = 
-(`r ag$obs` - `r ag$exp`) / (1 - `r ag$exp`) = `r round(epi.kappa(x)$kappa[1],3)`
+(`r ag$obs` - `r ag$exp`) / (1 - `r ag$exp`) = `r round(epi.kappa(cdss_phy)$kappa[1],3)`
 
 ```{r echo=FALSE, fig.width=8}
 library(epiR)
 # epi.kappa(x)$prop
 # epi.kappa(x)$kappa
 
-epi.kappa(x)$prop -> k
+epi.kappa(cdss_phy)$prop -> k
 
 barplot(k$obs, beside = FALSE, 
         xlim = 0:1, ylim = 0:1, width=.2, las=1)
@@ -111,8 +134,7 @@ text("1-Pe", x= 0.75, y = k$exp + (k$obs-k$exp)/2, pos=4)
 Function `epi.kappa()` in package `epiR`
 
 ```{r}
-library(epiR)
-res <- epi.kappa(x)    # x is the contingency table computed previously
+res <- epiR::epi.kappa(cdss_phy)    
 names(res)
 res$prop.agree         # proportions of observed and expected agreement
 res$kappa              # kappa (est) and CI (lower, upper)
@@ -148,13 +170,13 @@ head(d)
 
 Using cystoscopy as the reference standard:
 
-- Compute sensitivity and specificity of the BTA test 
+1. Compute sensitivity and specificity of the BTA test 
 
-- Compute sensitivity and specificity of cytology 
+2. Compute sensitivity and specificity of cytology 
 
-- Do these procedures have equal sensitivity?
+3. Do these procedures have equal sensitivity?
 
-- Do they have equal specificity?
+4. Do they have equal specificity?
 
-- To what extend the results of both procedures agree?
+5. To what extend the results of both procedures agree?
 

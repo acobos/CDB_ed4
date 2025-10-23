@@ -3231,13 +3231,30 @@ head(d)</pre>
 
 <p>Both the <code>CDSS</code> and the <code>Physician</code> assessed the need of LLD (as <code>Yes</code> or <code>No</code>)</p>
 
+</article></slide><slide class=""><hgroup><h2>Paired data</h2></hgroup><article  id="paired-data-1">
+
+<p>Two questions of possible interest:</p>
+
+<ol>
+<li><p>Are the CDSS and the physician equally prone to prescribe LLD?</p></li>
+<li><p>How well do they agree?</p></li>
+</ol>
+
+<p> </p>
+
+<p>Answers:</p>
+
+<ol>
+<li><p>McNemar’s test</p></li>
+<li><p>Cohen’s kappa (measure of agreement)</p></li>
+</ol>
+
 </article></slide><slide class=""><hgroup><h2>McNemar’s test</h2></hgroup><article  id="mcnemars-test">
 
 <p>Compares the two table margins, i.e., the <em>marginal homogeneity</em></p>
 
-<pre class = 'prettyprint lang-r'>library(mosaic)
-x &lt;- tally(CDSS ~ Physician, data=d)  
-addmargins(x)   # to show margins (Sum) of the contingency table </pre>
+<pre class = 'prettyprint lang-r'>cdss_phy &lt;- mosaic::tally(CDSS ~ Physician, data=d)  
+addmargins(cdss_phy)   # to show margins (Sum) of the contingency table </pre>
 
 <pre >     Physician
 CDSS   No Yes Sum
@@ -3254,25 +3271,21 @@ CDSS   No Yes Sum
 
 </article></slide><slide class=""><hgroup><h2>McNemar’s test</h2></hgroup><article  id="mcnemars-test-1">
 
-<pre class = 'prettyprint lang-r'>mcnemar.test(x, correct = FALSE)  </pre>
-
-<pre >
-    McNemar&#39;s Chi-squared test
-
-data:  x
-McNemar&#39;s chi-squared = 46.049, df = 1, p-value = 1.153e-11</pre>
-
-<pre class = 'prettyprint lang-r'>mcnemar.test(x)         </pre>
+<pre class = 'prettyprint lang-r'>mcnemar.test(cdss_phy)         </pre>
 
 <pre >
     McNemar&#39;s Chi-squared test with continuity correction
 
-data:  x
+data:  cdss_phy
 McNemar&#39;s chi-squared = 44.328, df = 1, p-value = 2.777e-11</pre>
 
-<p>Use correction if number of discrepant results is low (e.g., &lt; 10)</p>
+<p><br/><br/>The low p-value provides evidence of marginal <em>heterogeneity</em>, which implies a different probability of prescribing LLD by the CDSS and the physician.</p>
 
-</article></slide><slide class=""><hgroup><h2>Agreement: observed and expected (by chance)</h2></hgroup><article  id="agreement-observed-and-expected-by-chance">
+<p><br/></p>
+
+<p>The test may NOT be valid if there very few discrepant results (e.g. &lt; 10).</p>
+
+</article></slide><slide class=""><hgroup><h2>Agreement: observed and expected by chance</h2></hgroup><article  id="agreement-observed-and-expected-by-chance">
 
 <pre >$observed
      Physician
@@ -3301,8 +3314,7 @@ CDSS     No   Yes
 
 <p>Function <code>epi.kappa()</code> in package <code>epiR</code></p>
 
-<pre class = 'prettyprint lang-r'>library(epiR)
-res &lt;- epi.kappa(x)    # x is the contingency table computed previously
+<pre class = 'prettyprint lang-r'>res &lt;- epiR::epi.kappa(cdss_phy)    
 names(res)</pre>
 
 <pre >[1] &quot;prop.agree&quot; &quot;pindex&quot;     &quot;bindex&quot;     &quot;pabak&quot;      &quot;kappa&quot;     
@@ -3344,13 +3356,13 @@ head(d)</pre>
 
 <p>Using cystoscopy as the reference standard:</p>
 
-<ul>
+<ol>
 <li><p>Compute sensitivity and specificity of the BTA test</p></li>
 <li><p>Compute sensitivity and specificity of cytology</p></li>
 <li><p>Do these procedures have equal sensitivity?</p></li>
 <li><p>Do they have equal specificity?</p></li>
 <li><p>To what extend the results of both procedures agree?</p></li>
-</ul></article></slide>
+</ol></article></slide>
 
 
   <slide class="backdrop"></slide>
