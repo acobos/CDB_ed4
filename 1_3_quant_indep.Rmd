@@ -183,7 +183,22 @@ head(ais, 4)
 
 ## Exercise (cont.)
 
-Run the following script to read `hta.xls` data keeping only cases with at least one BP measurement and complete data for sex and total cholesterol:
+Download and read the `hta.xlsx` data following script, keeping only cases with at least one BP measurement and complete data for sex and total cholesterol:
+
+```{r echo=FALSE}
+
+downloadthis::download_file(
+  path = "./data/hta.xlsx",
+  button_label = "Download data",
+  button_type = "primary",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+
+```
+
+\
 
 ```{r eval = FALSE}
 d <- rio::import("data/hta.xlsx") %>% 
