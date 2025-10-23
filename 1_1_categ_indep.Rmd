@@ -61,7 +61,7 @@ If you prefer NOT to correct, then use argument `correct = FALSE`.
 
 ## Expected frequencies
 
-- Chi-square test is not safe if *expected frequencies* are too low (e.g. < 5)
+Chi-square test is not safe if *expected frequencies* are too low (e.g. < 5)
     
 ```{r}
 res <- chisq.test(bw_smoke)          # save test result (which is a list)
@@ -103,10 +103,14 @@ Cross-sectional  Risk difference (RD), Relative risk (RR), Odds ratio (OR)
 Cohort           Risk difference (RD), Relative risk (RR), Odds ratio (OR)
 Case-control     Odds ratio (OR)
 ---------------  ---------------------------------------------------------------------------------------
+
+\
+
+For definitions of these measures see [here](https://acobos.github.io/DA/analysis-of-categorical-data.html#association-measures).
     
 ## Measures of association
 
-`Epi::twoby2()` is very convenient, but will asume that:
+`Epi::twoby2()` is very convenient, but will assume that:
 
 - the outcome variable is in the *columns* of the table
 - the category of interest is the *first* column, and 
@@ -127,21 +131,34 @@ bw_smoke %>% t() %>% Epi::twoby2()
 ```
 
 
-## Extracting the desired measure
+## Extracting desired measure(s)
 
 ```{r}
 res <- bw_smoke %>% t() %>% Epi::twoby2(print = FALSE)   
+class(res)
+names(res)
+class(res$measures)
+dim(res$measures)
+
+```
+
+## Extracting desired measure(s)
+
+```{r}
 res$measures[-2,]                  # getting all rows but the second (and all cols)
 res$measures[1,]                   # getting the 1st row only  (and all cols)
 res$measures[1,1]                  # getting the 1st row, 1st col 
 
 ```
 
+
+
+
 ## Exercise
 
 Is low weight at birth related to race? 
 
-1. Answer the question based on the result of a test
+1. Answer the question based on the result of an appropriate test
 
 2. Compute the RR (95% CI) for the probability of low weight in:
 

@@ -3266,9 +3266,7 @@ X-squared = 4.2359, df = 1, p-value = 0.03958</pre>
 
 </article></slide><slide class=""><hgroup><h2>Expected frequencies</h2></hgroup><article  id="expected-frequencies">
 
-<ul>
-<li>Chi-square test is not safe if <em>expected frequencies</em> are too low (e.g. &lt; 5)</li>
-</ul>
+<p>Chi-square test is not safe if <em>expected frequencies</em> are too low (e.g. &lt; 5)</p>
 
 <pre class = 'prettyprint lang-r'>res &lt;- chisq.test(bw_smoke)          # save test result (which is a list)
 names(res)                           # see names of list elements</pre>
@@ -3351,9 +3349,13 @@ odds ratio
 </tr>
 </table>
 
+<p><br/></p>
+
+<p>For definitions of these measures see <a href='https://acobos.github.io/DA/analysis-of-categorical-data.html#association-measures' title=''>here</a>.</p>
+
 </article></slide><slide class=""><hgroup><h2>Measures of association</h2></hgroup><article  id="measures-of-association">
 
-<p><code>Epi::twoby2()</code> is very convenient, but will asume that:</p>
+<p><code>Epi::twoby2()</code> is very convenient, but will assume that:</p>
 
 <ul>
 <li>the outcome variable is in the <em>columns</em> of the table</li>
@@ -3393,10 +3395,28 @@ Conditional MLE Odds Ratio: 2.0141    1.0288   3.9649
         Asymptotic P-value: 0.0276 
 ------------------------------------------------------</pre>
 
-</article></slide><slide class=""><hgroup><h2>Extracting the desired measure</h2></hgroup><article  id="extracting-the-desired-measure">
+</article></slide><slide class=""><hgroup><h2>Extracting desired measure(s)</h2></hgroup><article  id="extracting-desired-measures">
 
 <pre class = 'prettyprint lang-r'>res &lt;- bw_smoke %&gt;% t() %&gt;% Epi::twoby2(print = FALSE)   
-res$measures[-2,]                  # getting all rows but the second (and all cols)</pre>
+class(res)</pre>
+
+<pre >[1] &quot;list&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>names(res)</pre>
+
+<pre >[1] &quot;table&quot;    &quot;measures&quot; &quot;p.value&quot; </pre>
+
+<pre class = 'prettyprint lang-r'>class(res$measures)</pre>
+
+<pre >[1] &quot;matrix&quot; &quot;array&quot; </pre>
+
+<pre class = 'prettyprint lang-r'>dim(res$measures)</pre>
+
+<pre >[1] 4 3</pre>
+
+</article></slide><slide class=""><hgroup><h2>Extracting desired measure(s)</h2></hgroup><article  id="extracting-desired-measures-1">
+
+<pre class = 'prettyprint lang-r'>res$measures[-2,]                  # getting all rows but the second (and all cols)</pre>
 
 <pre >                                       95% conf.  interval
              Relative Risk: 1.6076421 1.05781242 2.4432623
@@ -3417,7 +3437,7 @@ Conditional MLE Odds Ratio: 2.0141372 1.02878038 3.9649039
 <p>Is low weight at birth related to race?</p>
 
 <ol>
-<li><p>Answer the question based on the result of a test</p></li>
+<li><p>Answer the question based on the result of an appropriate test</p></li>
 <li><p>Compute the RR (95% CI) for the probability of low weight in:</p>
 
 <ul>
