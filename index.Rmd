@@ -23,28 +23,18 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 \
 
 
-## Analysis of categorical variables
+## Some common methods
 
 |  |  |
 |------------------------------------|------------------------------------|
-| [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1) |Solution to [exes](1_1_categ_indep_exe_solution.R)  |  | 
-[Categorical variables, paired samples](https://acobos.github.io/CDB_ed4/1_2_categ_paired.html)  |Solution to [exes](1_2_categ_paired_exe_solution.R)  |
-
-\
-
-## Analysis of quantitative variables
-
-|  |  |
-|------------------------------------|------------------------------------|
+| [Categorical variables, independent samples](https://acobos.github.io/CDB_ed4/1_1_categ_indep.html#1) |Solution to [exes](1_1_categ_indep_exe_solution.R) |  
+| [Categorical variables, paired samples](https://acobos.github.io/CDB_ed4/1_2_categ_paired.html) |Solution to [exes](1_2_categ_paired_exe_solution.R)  | 
 | [Quantitative variables, independents samples]()  |  |
 | [Quantitative variables, paired samples]()  |  |
 | [Analysis of variance]()  |  |
 | [Permutation tests and the bootstrap]()  |  |
 | [ROC curves and AUC]()  |  |
-
-
-
-## Association: [slides](https://acobos.github.io/CDB_ed2/4_0_association.html#1) or [recommended reading](https://acobos.github.io/DA/assessing-relations.html)?
+| [Association](https://acobos.github.io/CDB_ed2/4_0_association.html#1) (correlation) | |
 
 \
 
