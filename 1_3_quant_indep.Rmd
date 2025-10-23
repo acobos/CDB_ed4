@@ -165,7 +165,7 @@ gf_boxplot(lwt_kg ~ smoke, data = d, ylab = "mother's weight (kg)") %>%
 ```
 
 
-## Exercise
+## Exercise 1
 
 Dataset `ais` in package `DAAG`: hematocrite (`hc`) and `sex` of 202 athletes.
 
@@ -181,7 +181,7 @@ head(ais, 4)
 3. Would a distribution-free test produce a different result?
 
 
-## Exercise (cont.)
+## Exercise 2
 
 Download and read the `hta.xlsx` data following script, keeping only cases with at least one BP measurement and complete data for sex and total cholesterol:
 
