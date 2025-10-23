@@ -145,9 +145,9 @@ dim(res$measures)
 ## Extracting desired measure(s)
 
 ```{r}
-res$measures[-2,]                  # getting all rows but the second (and all cols)
-res$measures[1,]                   # getting the 1st row only  (and all cols)
-res$measures[1,1]                  # getting the 1st row, 1st col 
+res$measures[-3,]                  # getting all rows but the second (and all cols)
+res$measures[1,]  %>% round(2)     # getting the 1st row only (all cols), rounded 
+res$measures[1,1] %>% round(2)     # getting the 1st row, 1st col, rounded 
 
 ```
 

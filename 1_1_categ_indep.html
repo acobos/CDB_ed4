@@ -3416,21 +3416,21 @@ class(res)</pre>
 
 </article></slide><slide class=""><hgroup><h2>Extracting desired measure(s)</h2></hgroup><article  id="extracting-desired-measures-1">
 
-<pre class = 'prettyprint lang-r'>res$measures[-2,]                  # getting all rows but the second (and all cols)</pre>
+<pre class = 'prettyprint lang-r'>res$measures[-3,]                  # getting all rows but the second (and all cols)</pre>
 
 <pre >                                       95% conf.  interval
              Relative Risk: 1.6076421 1.05781242 2.4432623
-Conditional MLE Odds Ratio: 2.0141372 1.02878038 3.9649039
+         Sample Odds Ratio: 2.0219436 1.08065960 3.7831115
     Probability difference: 0.1532315 0.01757833 0.2871171</pre>
 
-<pre class = 'prettyprint lang-r'>res$measures[1,]                   # getting the 1st row only  (and all cols)</pre>
+<pre class = 'prettyprint lang-r'>res$measures[1,]  %&gt;% round(2)     # getting the 1st row only (all cols), rounded </pre>
 
 <pre >          95% conf.  interval 
- 1.607642  1.057812  2.443262 </pre>
+     1.61      1.06      2.44 </pre>
 
-<pre class = 'prettyprint lang-r'>res$measures[1,1]                  # getting the 1st row, 1st col </pre>
+<pre class = 'prettyprint lang-r'>res$measures[1,1] %&gt;% round(2)     # getting the 1st row, 1st col, rounded </pre>
 
-<pre >[1] 1.607642</pre>
+<pre >[1] 1.61</pre>
 
 </article></slide><slide class=""><hgroup><h2>Exercise</h2></hgroup><article  id="exercise">
 
