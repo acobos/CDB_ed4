@@ -1,0 +1,200 @@
+---
+title: "ROC curves and AUC"
+subtitle: "with package `pROC`"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+
+
+```
+
+## Prognosis of subarachnoid hemorrhage
+
+Dataframe `aSAH` in package `pROC` shows data from [this study](https://www.ncbi.nlm.nih.gov/pubmed/19760205)
+
+```{r}
+library(pROC); data(aSAH); head(aSAH)
+```
+
+Brain injury biomarkers `ndka` and `s100b`, assessed at ICU admission, tend to be elevated in patients with poor `outcome` at 6 months.
+
+Want to analize their accuracy to predict outcome.
+
+
+## Data visualization 
+
+```{r fig.height=4, fig.align='center'}
+library(dplyr); library(ggformula); library(patchwork)
+p1 <- aSAH %>% gf_boxplot(ndka ~ outcome) %>% gf_refine(coord_transform(y = "log10"))
+p2 <- aSAH %>% gf_boxplot(s100b ~ outcome) %>% gf_refine(coord_transform(y = "log10"))
+p1 + p2
+  
+```
+
+
+## ndka (ROC curve, AUC and 95% CI)
+
+<div class="columns-2">
+
+```{r fig.height=4, fig.width=4, fig.align='left'}
+roc1 <- roc(outcome ~ ndka, data = aSAH)
+plot.roc(roc1, col="blue", 
+         print.auc = TRUE)
+
+auc(roc1)
+ci.auc(roc1)
+set.seed(1)
+ci.auc(roc1, method = "bootstrap")
+```
+
+
+## s100b (ROC curve, AUC and 95% CI)
+
+<div class="columns-2">
+
+```{r fig.height=4, fig.width=4, fig.align='left'}
+roc2 <- roc(outcome ~ s100b, data = aSAH)
+plot.roc(roc2, col="darkgreen", 
+         print.auc=TRUE)
+
+auc(roc2)
+ci.auc(roc2)
+set.seed(1)
+ci.auc(roc2, method = "bootstrap")
+
+```
+
+For more plotting options, see the help `?plot.roc` 
+
+
+## Comparing AUC's of ROC curves: DeLong's test
+
+```{r}
+roc.test(roc1, roc2)
+```
+
+
+No evidence of different accuracy (p = 0.164).
+
+Uses normal approximation.
+
+
+## Comparing AUC's of ROC curves: bootstrap
+
+```{r}
+set.seed(1)                                   # for reproducibility
+roc.test(roc1, roc2, method = "bootstrap")
+```
+
+\
+
+No evidence of different accuracy (p = 0.160).
+
+## Plotting both ROC curves
+
+```{r fig.height=4, fig.width=5, fig.align='center'}
+plot.roc(roc1, col="blue", print.auc=TRUE, 
+         main = "ROC curves for ndka (blue) & s100b (green)")
+plot.roc(roc2, col="darkgreen", print.auc=TRUE, 
+         add = TRUE, print.auc.x = 0.5, print.auc.y = 0.4)
+```
+
+
+## "Best" threshold (max. Youden index)
+
+<div class="columns-2">
+
+```{r fig.height=4, fig.width=4, fig.align='left'}
+plot.roc(roc2, col="darkgreen", 
+         print.auc=TRUE, 
+         print.thres = "best")
+aSAH %>% gf_boxplot(s100b ~ outcome) %>% 
+  gf_refine(coord_transform(y = "log10")) %>% 
+  gf_hline(yintercept = 0.205, lty=2, col = "red")
+
+```
+
+
+## Plotting ROC curves with ggplot2 graphic system
+
+The `plot.roc()` function uses base R graphics 
+
+To produce a ggplot2 graphic, use `ggroc()`
+
+```{r fig.align='center', fig.height=3}
+plot1 <- ggroc(roc1, col = "blue")
+plot2 <- ggroc(list(ndka=roc1, s100b=roc2))
+plot1 + plot2
+```
+
+
+## A function for plotting 95% CI bands {.smaller}
+
+Adapted from [here](https://rpubs.com/vguillem/465086).
+
+```{r}
+roc_with_ci <- function(obj) {
+  ciobj <- ci.se(obj, specificities = seq(0, 1, l = 25))
+  dat.ci <- data.frame(x = as.numeric(rownames(ciobj)),
+                       lower = ciobj[, 1],
+                       upper = ciobj[, 3])
+  
+  ggroc(obj, col = "blue") +
+    theme_minimal() +
+    geom_abline(
+      slope = 1,
+      intercept = 1,
+      linetype = "dashed",
+      alpha = 0.7,
+      color = "darkgrey"
+    ) + coord_equal() +
+    geom_ribbon(
+      data = dat.ci,
+      aes(x = x, ymin = lower, ymax = upper),
+      fill = "steelblue",
+      alpha = 0.2
+    ) + ggtitle(capture.output(obj$ci))
+} 
+
+```
+
+
+## A function for plotting 95% CI bands
+
+```{r fig.align='center'}
+roc_with_ci(roc2) %>% 
+  gf_labs(title = "s100b ROC curve with bootstrap 95% confidence bands")
+
+```
+
+
+## Exercise
+
+Use the `aSAH` dataset in package `pROC` to analize the accuracy of `wfns` (World Federation of Neurological Surgeons) to predict poor outcome.
+
+1. Plot the ROC curve of `wfns` along with those of `ndka` and `s100b`. 
+
+1. Compute AUC ROC and CI for all three markers, using appropriate method: DeLong's or bootstrap?
+
+1. Compare the AUC ROC of `wfns` with the other two markers using appropriate method: DeLong's or bootstrap?
+
+1. Plot the optimal threshold (maximizing the Youden index) in the ROC curve.
+
+`wfns` is a factor. Start by converting to a numeric variable with `as.numeric()`:
+
+```{r eval = FALSE, echo=TRUE}
+library(pROC); data(aSAH) 
+aSAH$wfns <- as.numeric(aSAH$wfns)
+```
+
+
+
