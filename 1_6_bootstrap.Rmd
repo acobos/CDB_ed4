@@ -1,0 +1,125 @@
+---
+title: "Permutation tests and the bootstrap"
+subtitle: "with package `MKinfer`"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+```
+
+
+
+## Birth weights
+
+```{r}
+library(tidyverse)
+library(mosaic)
+library(ggformula)
+
+d <- MASS::birthwt %>% 
+  mutate(race = factor(race, levels = 1:3, labels = c("white", "black", "other")),
+         low = factor(low, levels = c(1,0), labels = c("Low", "Normal")),
+         smoke = factor(smoke, levels = c(1,0), labels = c("smoker", "non_smoker")),
+         lwt_kg = 0.453592 * lwt)  # mother's weight: convert pounds to kg)
+
+head(d, 4)        
+
+```
+
+
+## Mother's weight
+
+```{r fig.height = 3, fig.align='center'}
+gf_boxplot(lwt ~ smoke, data = d) %>% 
+  gf_summary(fun = mean, geom = "point", color = "red") %>% 
+  gf_refine(coord_flip())
+
+```
+
+
+## Wilcoxon rank sum test 
+
+```{r}
+wilcox.test(lwt ~ smoke, data = d)
+```
+
+\
+
+No evidence of a difference in location.
+
+
+## Hodges-Lehmann estimator (_pseudomedian_) {.smaller}
+
+```{r}
+wilcox.test(lwt ~ smoke, data = d, conf.int =TRUE)
+```
+
+Estimates the difference in location:
+
+- This is NOT the difference of medians (a common missconception)
+
+- Rather, it is the median of the differences computed for all possible pairs of a smoker and a non-smoker.
+
+Not an easy interpretation.
+
+
+## Permutation tests and the bootstrap
+
+Both procedures are distribution-free: do not require normality assumption.
+
+- [Permutation tests](https://en.wikipedia.org/wiki/Permutation_test) (sometimes called randomization tests) are more suited to hypothesis testing.
+
+- [The bootstrap](https://www.bmj.com/content/350/bmj.h2622) is more suited to confidence interval estimation.
+
+However, both can produce p-values and confidence intervals.
+
+Can be applied to many sample statistics (but we will concentrate on means).
+
+\
+
+For an in depth coverage of the topic, see:
+
+[Brian Efron and Robert J. Tibshirani. An introduction to the bootstrap](https://books.google.co.cr/books?id=gLlpIUxRntoC&printsec=frontcover&hl=es#v=onepage&q&f=false)
+
+
+## Permutation test 
+
+```{r}
+set.seed(1)                                  # for reproducibility
+MKinfer::perm.t.test(lwt ~ smoke, data = d)
+```
+
+No evidence of a difference in means.
+
+
+## Boostrap
+
+```{r}
+
+set.seed(1)                                  # for reproducibility
+MKinfer::boot.t.test(lwt ~ smoke, data = d)
+```
+
+
+## Exercise
+
+The file `erosive_esophagitis.xls` contains data on a clinical trial comparing two treatments (A or B) for severe erosive esophagitis. The primary efficacy endpoint was the healing of all erosions as determined by endoscopy after eight weeks of therapy.
+
+Total cost of care (US dollars 1992) were recorded, including study drug, concomitant antacids, all non-protocol driven medical costs (i.e., physician visits, emergency room visits, treatment of adverse effects, procedures, etc.). 
+
+Questions:
+
+1. Is there any evidence different costs depending on the treatment? 
+
+1. What is the estimate of the difference in mean costs with A or B?
+
+
