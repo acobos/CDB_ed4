@@ -112,7 +112,7 @@ MKinfer::boot.t.test(lwt ~ smoke, data = d)
 
 ## Exercise
 
-The file `erosive_esophagitis.xls` contains data on a clinical trial comparing two treatments (A or B) for severe erosive esophagitis. The primary efficacy endpoint was the healing of all erosions as determined by endoscopy after eight weeks of therapy.
+The file [erosive_esophagitis.xls](https://raw.githubusercontent.com/acobos/Datasets/master/erosive_esophagitis.xls) contains data on a clinical trial comparing two treatments (A or B) for severe erosive esophagitis. The primary efficacy endpoint was the healing of all erosions as determined by endoscopy after eight weeks of therapy.
 
 Total cost of care (US dollars 1992) were recorded, including study drug, concomitant antacids, all non-protocol driven medical costs (i.e., physician visits, emergency room visits, treatment of adverse effects, procedures, etc.). 
 
