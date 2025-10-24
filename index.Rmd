@@ -31,7 +31,7 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 | [Categorical variables, paired samples](https://acobos.github.io/CDB_ed4/1_2_categ_paired.html) |[Solution to exes](1_2_categ_paired_exe_solution.R)  | 
 | [Quantitative variables, independents samples](https://acobos.github.io/CDB_ed4/1_3_quant_indep.html) |[Solution to exes](1_3_quant_indep_exe_solution.R) |
 | [Quantitative variables, paired samples](https://acobos.github.io/CDB_ed4/1_4_quant_paired.html)  |[Solution to exes](1_4_quant_paired_exe_solution.R)  |
-| [Analysis of variance]()  |  |
+| [Analysis of variance](https://acobos.github.io/CDB_ed4/1_5_anova.html)  |[Solution to exes](1_5_anova_exe_solution.R)  |
 | [Permutation tests and the bootstrap]()  |  |
 | [ROC curves and AUC]()  |  |
 | [Association](https://acobos.github.io/CDB_ed2/4_0_association.html#1) (correlation) | |
