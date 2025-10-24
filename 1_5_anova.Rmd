@@ -1,0 +1,134 @@
+---
+title: "Analysis of Variance (ANOVA)"
+subtitle: "Independent samples"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+```
+
+## Birth weights
+
+```{r}
+library(tidyverse)
+
+d <- MASS::birthwt %>% 
+  mutate(race = factor(race, levels = 1:3, labels = c("white", "black", "other")),
+         low = factor(low, levels = c(1,0), labels = c("Low", "Normal")),
+         smoke = factor(smoke, levels = c(1,0), labels = c("smoker", "non_smoker")),
+         lwt_kg = 0.453592 * lwt)  # mother's weight: convert pounds to kg)
+
+head(d, 4)        
+
+library(mosaic)
+library(ggformula)
+```
+
+## Birth weight related to race?
+
+```{r fig.height=2.5}
+tally(~race, data = d)
+
+gf_boxplot(bwt ~ race, data = d) %>% 
+  gf_summary(fun = mean, geom = "point", color = "red") %>% 
+  gf_refine(coord_flip())
+
+```
+
+## ANOVA 
+
+```{r}
+result <- aov(bwt ~ race, data = d)      # sums of squares
+anova(result)                            # ANOVA table
+
+```
+
+\
+
+Evidence that means of `bwt` are not all equal (p = 0.008).
+
+
+## Normality assessment
+
+```{r fig.align='center'}
+d$residuals <- result$residuals                         # save residuals to dataframe d
+gf_qq(~residuals, data = d) %>%  gf_qqline(col="red")   # QQ-plot 
+
+```
+
+
+## Normality and homocedasticity tests
+
+```{r}
+shapiro.test(d$residuals)                               # normality test
+bartlett.test(bwt ~ race, data = d)                     # homocedasticity
+```
+
+\
+
+Tests not recommended.
+
+
+## Pairwise comparisons (*a posteriori*): Tukey {.smaller}
+
+To control the family-wise type I error rate (conservative).
+
+```{r}
+library(lsmeans)
+lsmeans(result, pairwise~race)
+
+```
+
+
+## Pairwise comparisons (*a posteriori*): FDR {.smaller}
+
+False Discovery Rate (FDR), is less conservative (more powerful).
+
+```{r}
+lsmeans::lsmeans(result, pairwise ~ race, adjust="fdr")
+```
+
+
+Multiple comparisons is a dificult topic. See [here](https://benwhalley.github.io/just-enough-r/multiple-comparisons.html) for more.
+
+## Mother's weight homogeneous accross races? 
+
+```{r fig.height = 3, fig.align='center'}
+gf_boxplot(lwt_kg ~ race, data = d) %>% 
+  gf_summary(fun = mean, geom = "point", color = "red") %>% 
+  gf_refine(coord_flip())
+
+```
+
+
+## Kruskal-Wallis test (distribution-free)
+
+```{r}
+kruskal.test(lwt_kg ~ race, data = d) 
+
+```
+
+\
+
+Evidence that distributions of `bwt` are not homogeneous (p < 0.001).
+
+
+## Exercise
+
+With the birthweight data, compute a new variable grouping the number of physician visits during the first trimester (`ftv`) as: "none", "one", "2++".  
+Using this variable, try to answer these questions:
+
+1. Are there differences in the birth weight (`bwt`) across these three groups?
+
+1. Are there differences in the weight of mothers (`lwt_kg`) across these three groups?
+
+In each case, decide the type of analysis by inspection of boxplots.
