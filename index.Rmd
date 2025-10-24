@@ -34,7 +34,7 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 | [Analysis of variance](https://acobos.github.io/CDB_ed4/1_5_anova.html) |[Solution to exes](1_5_anova_exe_solution.R)  |
 | [Permutation tests and the bootstrap](https://acobos.github.io/CDB_ed4/1_6_bootstrap.html)  |[Solution to exes](1_6_bootstrap_exe_solution.R) |
 | [ROC curves and AUC](https://acobos.github.io/CDB_ed4/1_7_roc_auc.html) |[Solution to exes](1_7_roc_auc_exe_solution.R)  |
-| [Association](https://acobos.github.io/CDB_ed2/1_8_association.html) | [Solution to exes](1_8_association_exe_solution.R) |
+| [Association](https://acobos.github.io/CDB_ed4/1_8_association.html) | [Solution to exes](1_8_association_exe_solution.R) |
 
 \
 
