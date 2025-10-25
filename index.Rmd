@@ -71,6 +71,8 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 
 - Do not use histograms to assess normality: [find out why](https://statisticsbyjim.com/basics/assessing-normality-histograms-probability-plots/).
 
+- [Introduction to Bootstrapping in Statistics with an Example](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/). A short and intuitive introduction to the bootstrap.
+
 - [Packages for ROC curves](https://rviews.rstudio.com/2019/03/01/some-r-packages-for-roc-curves/)
 
 
@@ -78,4 +80,4 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 
 
 
-- [Introduction to Bootstrapping in Statistics with an Example](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/). A short and intuitive introduction to the bootstrap.
+
