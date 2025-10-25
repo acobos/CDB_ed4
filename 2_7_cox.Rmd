@@ -1,0 +1,126 @@
+---
+title: "Cox model"
+subtitle: "with packages `survival` and `survminer`"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+
+library(survival)
+library(survminer)
+```
+
+## The Cox _proportional hazards_ model (CPHM) {.smaller}
+
+
+<center>
+
+$h(t) \quad = \quad h_0(t) \quad e\ ^{\ \beta_1 x_1 + \ \beta_2 x_2 + ...+ \ \beta_k x_k} \quad = \quad  h_0(t) \quad e\ ^{\beta_1 x_1} \ e\ ^{\beta_2 x_2} \ ... \ e\ ^{\beta_k x_k}$ 
+
+</center>
+
+Models the _hazard function_ $h(t) = \frac{f(t)}{S(t)}$, the instantaneous _hazard_ of event at time $t$
+
+$h_0(t)$ is the baseline hazard (i.e., when all $x$'s are 0)
+
+$e\ ^{\beta}$ are _hazard ratios_; suppose $x_1$ is an indicator (i.e., 0 or 1); then  
+
+- $h(t|x_1=1) \quad = \quad h_0(t) \quad e\ ^{\beta_1} \quad e\ ^{\beta_2 x_2} \quad ... \quad e\ ^{\beta_k x_k}$
+
+- $h(t|x_1=0) \quad = \quad h_0(t) \quad 1 \qquad e\ ^{\beta_2 x_2} \quad ... \quad e\ ^{\beta_k x_k}$
+
+So that  
+
+- $\frac{h(t|x_1=1)}{h(t|x_1=0)} = e\ ^{\beta_1}$
+
+So, it is implicitely assumed that the _hazard ratio_ for _any time t_ is a constant, which does not depend on $t$
+
+
+
+
+## Fitting a CPH model {.smaller}
+
+Function `coxph()` fits CPH models
+
+```{r}
+
+fit <- coxph(Surv(time, status) ~ sex, data = lung)
+fit
+
+```
+
+\
+
+Assumptions:
+
+- Non-informative censoring
+
+- Proportional hazards 
+
+## Hazard Ratios (HR) {.smaller}
+
+Exponentiate the model coefficients (and CI) to get HR (and CI)
+
+```{r}
+coef(fit)           # gets model coefficients
+exp(coef(fit))      # gets the HR 
+exp(confint(fit))   # gets the 95% CI for HR
+```
+
+
+## A model with three variables {.smaller}
+
+```{r}
+
+fit <- coxph(Surv(time, status) ~ age + sex + ph.ecog, data = lung)
+fit
+
+exp(coef(fit))                    # to get hazard ratios (HR)
+
+```
+
+
+## Plotting HR {.smaller}
+
+```{r fig.align='center'}
+
+ggforest(fit, data = lung, fontsize = 1)            # function ggforest() from package survminer
+
+```
+
+
+## Assessing the PH assumption {.smaller}
+
+A test for deviation from proportional hazards can be done with function `cox.zph` 
+
+```{r}
+
+cox.zph(fit)
+
+```
+
+A significant p-value means evidence of deviation from proportional hazards.
+
+Fore more thorough ways of assessing assumptions of the Cox PH model, see [this](https://www.r-bloggers.com/cox-model-assumptions/)
+
+When PH do not hold, [Accelerated Failure Time (AFT) models](https://pubmed.ncbi.nlm.nih.gov/17080754/) may be used.
+
+## Exercise 
+
+Prepare the `ovarian`  data as in the previous exercise.
+
+1. Fit a Cox PH model with treatment group, residual disease, age group, and ECOG performance status as covariates.
+
+1. Plot the HR from this model fit
+
+1. Verify the PH assumption in this model fit
+
+
