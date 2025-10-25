@@ -1,0 +1,207 @@
+---
+title: "Logistic Regression model (1)"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+
+```
+
+## Burns
+
+`burn1000` in package `aplore3`:  1000 cases of burn injuries
+
+```{r}
+library(aplore3)
+d <- burn1000         # just to have shorter name for the dataframe
+head(d, 4)
+```
+
+- `tbsa`: $\qquad$ Total burn surface area (0 - 100%)
+- `inh_inj`: $\quad$ Burn involved inhalation injury 
+- `flame`: $\qquad$ Flame involved in burn injury 
+
+
+## A summary of the data
+
+```{r}
+library(tidyverse)
+d %>% 
+  select(-id, -facility) %>% 
+  summary()
+```
+
+
+## Modeling probabilities - Logistic function {.smaller}
+
+Outcome coded as 1 for "Dead", 0 for "Alive". Does the *probability* of dying ($\pi$) increase with `tbsa` ($x$)?
+
+</br>
+
+```{r, echo=FALSE, fig.height=3, fig.width=10, fig.align='center'}
+outcome <- ifelse(d$death == "Dead", 1, 0)
+
+m <- lm(outcome ~ tbsa, data = d)
+d$pred <- predict(m)
+
+library(ggformula)
+gf_jitter(outcome ~ tbsa, data =d, alpha = 0.2, width=0, height=0.05,
+          title="Linear function") %>%
+  gf_line(pred ~ tbsa, color = "red", lwd=1) %>%
+  gf_abline(slope=0, intercept = 1, lty=2) %>%
+  gf_abline(slope=0, intercept = 0, lty=2) %>%
+  gf_lims(y = c(-0.10, 1.10)) +
+  scale_y_continuous(breaks = seq(0,1,.2)) -> p1
+
+
+m <- glm(outcome ~ tbsa, family = binomial, data = d)
+d$pred <- predict(m,  type = "response")
+
+gf_jitter(outcome ~ tbsa, data =d, alpha = 0.2, width=0, height=0.05,
+          title="Logistic function") %>%
+  gf_line(pred ~ tbsa, color = "red", lwd=1) %>%
+  gf_abline(slope=0, intercept = 1, lty=2) %>%
+  gf_abline(slope=0, intercept = 0, lty=2) %>%
+  gf_lims(y = c(-0.10, 1.10)) +
+  scale_y_continuous(breaks = seq(0,1,.2)) -> p2
+
+library(gridExtra)
+grid.arrange(p1 + theme(plot.margin=margin(2,40,2,40)),
+             p2 + theme(plot.margin=margin(2,40,2,40)),
+             nrow=1, ncol=2)
+
+```
+
+</br> 
+
+<center>
+$\pi = \beta_0 + \beta_1 x \qquad \qquad \qquad  \qquad  \pi = \frac{e^{\beta_0 + \beta_1 x}}{1 \enspace + \enspace e^{\beta_0 + \beta_1 x}}$ 
+</center>
+
+## The logit transformation 
+
+$\pi = \frac{e^{\beta_0 + \beta_1 x}}{1 \enspace + \enspace e^{\beta_0 + \beta_1 x}} = \frac{e^{LP}}{1 \enspace + \enspace e^{LP}} \qquad$ where $\quad LP = \beta_0 + \beta_1 x$
+
+$\frac{1}{\pi} = \frac{1 \enspace + \enspace e^{LP}}{e^{LP}} = \frac{1}{e^{LP}} + 1$
+
+$\frac{1}{\pi} -1 = \frac{1}{e^{LP}}$
+
+$\frac{1-\pi}{\pi} = \frac{1}{e^{LP}}$
+
+$\frac{\pi}{1-\pi} = e^{LP} \quad \implies \quad ln(\frac{\pi}{1-\pi}) = \beta_0 + \beta_1 x$
+
+To note:
+
+- $ln(\frac{\pi}{1-\pi})$ is the *log-odds*, or the *logit* of $\pi$
+
+- The logit of $\pi$ is linearly related to x
+
+## A first model based on `tbsa` {.smaller}
+
+Use function `glm()` with option `familiy = binomial` !!  
+You will be modeling the probability of the *second* level of `death` !!
+
+```{r}
+mod_s <- glm(death ~ tbsa, data = d, family=binomial)         # do not forget!  family=binomial
+summary(mod_s)
+
+```
+
+## Interpreting coefficients of quantitative vars
+
+<center>
+$ln(\frac{\pi}{1-\pi}) = \beta_0 + \beta_1 x$  
+</center>
+</br>
+
+$\beta_0 =$ log-odds when $x=0$  
+
+$\beta_1 =$ change in log-odds per unit increment in $x$  
+- $x=k: \quad \qquad \beta_0 + \beta_1 k$  
+- $x=k+1: \quad \beta_0 + \beta_1 (k+1) = \beta_0 + \beta_1 k + \beta_1$  
+
+So that,   $\qquad \beta_1 = ln(\frac{\pi|x=k+1}{1-\pi|x=k+1}) - ln(\frac{\pi|x=k}{1-\pi|x=k}) = ln \left( \frac{\frac{\pi|x=k+1}{1-\pi|x=k+1}}{\frac{\pi|x=k}{1-\pi|x=k}} \right)$  
+Therefore, $\qquad e^{\beta_1} = \frac{\frac{\pi|x=k+1}{1-\pi|x=k+1}}{\frac{\pi|x=k}{1-\pi|x=k}} \qquad$ is the OR for a unit increment in $x$
+
+## Exponentiate coefficients to interpret
+
+```{r}
+coef(mod_s); exp(coef(mod_s)) 
+```
+
+The odds when `tbsa`=0:   $\quad \text{O}_0 =$ `r round(exp(coef(mod_s))[1],2)`  
+(meaningless in this case, since `tbsa`=0 means no burn!)
+
+The OR for a unit increase in `tbsa`:  $\quad \text{OR}_1 =$ `r round(exp(coef(mod_s))[2],2)` 
+
+In general, the OR for a $k$ units increase is $(\text{OR}_1)^k$, therefore 
+
+The OR for a 10 units increase in `tbsa`: $\quad$ (`r round(exp(coef(mod_s))[2],2)`)$^{10}$ = `r round(exp(coef(mod_s))[2]^10,2)`
+
+## Exponentiate the CI of coefficients also
+
+```{r}
+exp(coef(mod_s))           # exponential of coefficients
+exp(confint(mod_s))        # and their 95% CI
+```
+
+```{r echo=FALSE}
+exp(coef(mod_s))[2] -> beta
+exp(confint(mod_s))[2,] -> beta_ci
+```
+
+The OR for a unit increase in `tbsa` is $\quad$ `r round(beta,2)`  [`r  paste(round(beta_ci,2), collapse=", ")`]
+
+and raising these values to 10...
+
+The OR for a 10 units increase in `tbsa` is $\quad$ `r round(beta^10,2)`  [`r paste(round(beta_ci^10,2), collapse=", ")`]
+
+## A second model, based on `inh_inj` {.smaller}
+
+```{r}
+mod_i <- glm(death ~ inh_inj, data = d, family=binomial)  
+summary(mod_i)
+```
+
+## Interpreting (exponentiated) coefficients
+
+If explanatory variable is a factor, the *exponentials* of coefficients are:
+
+- `Intercept`: the odds of dead for the reference level (no inhalation injury)
+
+- `inh_injYes`: the OR of dead (Inhalation injury / no inhalation injury)
+
+```{r}
+exp(coef(mod_i))
+
+library(mosaic); tally(death ~ inh_inj, data=d)
+
+```
+
+## Exercise
+
+1. Read the [Titanic data](https://raw.githubusercontent.com/acobos/Datasets/master/Mysterious_event.txt) with the following code:
+
+    ```{r eval = FALSE}
+    d <- rio::import("https://raw.githubusercontent.com/acobos/Datasets/master/Mysterious_event.txt",
+                 stringsAsFactors  = TRUE)
+    ```
+
+    + What are the levels of `Survival`? Which level will be modelled in a logistic regression analysis using `glm(..., family = binomial)`?
+    
+    + Fit a logistic regression model (`m1`) for `Survival` with only `Class` as predictor, and get the model summary.
+    
+    + Based on the summary, what class has the lowest survival probability?
+    
+    + What is the OR of survival for class S compared to class 1?
+
+    + What is the OR of survival for class 1 compared to class S?  
+

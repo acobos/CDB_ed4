@@ -30,11 +30,15 @@ m1 <- lm(Pulse2 ~ group, data = d)
 summary(m1)
 
 # did running have an effect on the pulse rate?
-# Yes: a very significant p-vaue for groupRan
+# Yes: a very significant p-value for groupRan
 
 # by how much the pulse is affected by running? provide a 95 CI
 coef(m1)
 confint(m1)
+
+coef(m1)[2]                # effect of running...
+confint(m1)[2,]            # and 95% CI
+
 
 # predicted value of Pulse2 for students that sat
 # since Sat is the reference level, the Intercept
