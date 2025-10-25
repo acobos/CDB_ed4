@@ -1,0 +1,235 @@
+---
+title: "General Linear Model (3)"
+subtitle: "Confounding and interaction"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      error = TRUE, warning = FALSE,  message = FALSE,
+                      comment = NA, fig.align='center')
+
+
+```
+
+
+## Confounding
+
+General interpretation of model coefficients:  
+Effect of the corresponding $x$ on $y$, **given all other predictors**
+
+- Coefficients will generally change if we change the model  
+(i.e., eliminate, or add, predictors)
+- This provides a way to assess **confounding**:
+    - Model 1: $\quad y = \beta_0 + \beta_1 x_1 + \epsilon$  
+    - Model 2: $\quad y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon$
+    
+\
+
+$x_2$ is a **counfounder** for $x_1$, if the effect of $x_1$ (that is, $\beta_1$)  
+is different in Model 1 and Model 2
+
+
+
+## Confounding example (simulated data)
+
+- Suppose an observational study comparing lipid lowering drugs A and B    
+- Colesterol is measured pre- and pos-treament  
+
+```{r conf, echo=F, fig.width=10, fig.height=4}
+
+set.seed(100)
+x = round(300 + 30*rnorm(100))
+k = as.numeric(cut(x,quantile(x)+.5,labels=1:4))
+temp=rbinom(100,1,0.5)
+t = ifelse(k<2,1,ifelse(k>3,0,temp))
+y = round(8.5 + 0.95*x + 10*rnorm(100))
+
+
+library(RColorBrewer)
+myColors <- brewer.pal(6, "Set1")
+
+par(mfrow=c(1,2), mar=c(4,4,2,2))
+treatment <- factor(t, levels=0:1, labels=LETTERS[1:2])
+boxplot(y ~ treatment, col=myColors, ylab="Pos-treatment cholesterol (mg/dl)")
+
+color = myColors[t+1]
+plot(y ~ x, col=color, las=1,  
+     ylab="Pos-treatment cholesterol (mg/dl)", 
+     xlab="Pre-treatment cholesterol (mg/dl)")
+legend(x="topleft",c("drug A","drug B"), pch=1,col=myColors)
+rug(y[t==1], side=2, col=myColors[2])
+rug(y[t==0], side=4, col=myColors[1])
+```
+
+
+
+## Modelling pos-treatment values (y)  {.smaller}
+
+- A first model (m1) including only **treatment** as predictor (A is the  reference level)
+- A second model (m2) including both **treatment** and **pre-treatment values (x)**  
+- In both models, $\beta_{treatmentB}$ is the expected **difference** betwen B and A (the **reference** level)
+
+```{r conf2, echo=TRUE}
+
+m1 <-  lm(y ~ treatment); print(summary(m1)$coeff,digits=2) 
+
+m2 <-  lm(y ~ x + treatment); print(summary(m2)$coeff,digits=2)
+
+```
+  
+- Note that treatment effect is no longer significant
+- Note how small is now the estimated treatment effect
+
+
+## The two models, grapically
+
+In both plots, the treatment effect is the *vertical* distance between lines (A-B):
+
+
+$\qquad \qquad$ **m1**: quite obviously, `r round(coef(m1)["treatmentB"])` mg/dl $\qquad \qquad  \qquad$  **m2**: *given* $x$, `r round(coef(m2)["treatmentB"])` mg/dl
+
+
+```{r echo = FALSE, fig.width=10, fig.height=4}
+
+par(mfrow=c(1,2), mar=c(4,4,2,2))
+plot(y ~ jitter(t,1/2), col=myColors[t+1], 
+     ylab="Pos-treatment cholesterol (mg/dl)",
+     xlab="Treatment",
+     xlim = c(-0.5,1.5),
+     axes=FALSE,
+     frame.plot=TRUE)
+axis(2)
+axis(1, at=0:1, labels=c("A", "B"))
+abline(h = coef(m1)[1], col = myColors[1])
+abline(h = coef(m1)[1]+coef(m1)[2], col = myColors[2])
+title(as.character(m1$call)[2])
+
+plot(y ~ x, col=color, las=1,  
+     ylab="Pos-treatment cholesterol (mg/dl)", 
+     xlab="Pre-treatment cholesterol (mg/dl)")
+legend(x="topleft",c("drug A","drug B"), pch=1,col=myColors)
+rug(y[t==1], side=2, col=myColors[2])
+rug(y[t==0], side=4, col=myColors[1])
+abline(a = coef(m2)[1], b = coef(m2)[2], col = myColors[1])
+abline(a = coef(m2)[1]+coef(m2)[3], b =coef(m2)[2] , col = myColors[2])
+title(as.character(m2$call)[2])
+```
+
+
+## Interaction
+
+Interaction between two predictors $x_1$ and $x_2$:
+
+- the effect of $x_1$ is not constant, but depends on $x_2$ 
+
+- the effect of $x_2$ is not constant, but depends on $x_1$
+
+
+</br>
+
+If this is the case, we say that
+
+- $x_2$ is an effect modifier for $x_1$
+
+- $x_1$ is an effect modifier for $x_2$
+
+
+## Interaction example {.smaller}
+
+- Clinical trial on a lipid lowering drug vs placebo; blood colesterol is measured pre- and pos-treatment  
+- Note in this case pre-treatment values are similar in both treatment groups
+
+```{r inter_example, echo=F, fig.width=5}
+set.seed(100)
+x <-  round(300 + 30*rnorm(100))
+t <-  rep(0:1,each=50)
+y <-  round(8.5 + 0.95*x + 80*t -0.36*x*t + 10*rnorm(100))
+color <-  myColors[t+1]
+
+par(mfrow=c(1,1), mar=c(4,4,1,2))
+plot(x,y, col=color, las=1, ylab="Pos-treatment", xlab="Pre-treatment")
+legend(x="topleft",c("Pacebo","Drug"), pch=1, col=myColors[1:2])
+
+```
+
+
+
+## Fitting models with/without interaction 
+
+```{r inter_model, echo=TRUE, fig.width=5}
+m1 <-  lm(y ~ x + t); print(summary(m1)$coeff, digits=2)          # without interaction
+m2 <-  lm(y ~ x + t + x:t); print(summary(m2)$coeff, digits=2)    # with interaction 
+
+```
+
+
+
+## The two models, grapically
+
+In both cases we fit two lines (one for each treatment), but:
+
+$\qquad$ different intercept, same slope $\qquad$ different intercept, different slope
+
+```{r inter_plots, echo=F, fig.width=10}
+
+par(mfrow=c(1,2), mar=c(4,4,4,2))
+plot(x,y, col=color, las=1, ylab="Pos-treatment", xlab="Pre-treatment")
+abline(m1$coefficients[1:2])
+abline(m1$coefficients[1]+ m1$coefficients[3], m1$coefficients[2])
+legend(x="topleft",c("Pacebo","Drug"), pch=1, col=myColors[1:2])
+title("m1: without interaction")
+
+plot(x,y, col=color, las=1, ylab="Pos-treatment", xlab="Pre-treatment")
+abline(m2$coefficients[1:2])
+abline(m2$coefficients[1]+ m2$coefficients[3], m2$coefficients[2]+m2$coefficients[4])
+legend(x="topleft",c("Pacebo","Drug"), pch=1, col=myColors[1:2])
+title("m2: with interaction")
+
+```
+
+
+
+## Exercise
+
+A simple experiment on [pulse rate before and after physical exercise](http://www.statsci.org/data/oz/ms212.html)
+
+```{r read_data, echo=TRUE}
+d <- rio::import("http://www.statsci.org/data/oz/ms212.txt")
+```
+
+\
+
+`Pulse1`: pulse rate before intervention.  
+
+`Ran`: randomized intervention, either 1=Ran, or 2=Sat, for 1 minute.  
+
+`Pulse2`: pulse rate after intervention 
+
+
+## Exercise (cont)
+
+1. Are there any missing values in `d `? If yes, subset `d` to eliminate them.
+
+1. Create factor `group`, with levels "Sat" and "Ran" (in this order).
+
+1. Fit a linear model for `Pulse2` with `group` as predictor. From the model summary:
+    + Did running have an effect on the pulse rate?  
+    + By how much the pulse is affected by running? provide a 95 CI.  
+    + What is the predicted value of `Pulse2` for:  
+        + students that sat?  
+        + those who ran?  
+    + Verify by computing the means of `Pulse2` in both groups.
+
+
+## Exercise (cont)
+
+4: Fit a second model with both `group` and `Pulse1` as predictors, and:  
+
+- Test for a possible interaction. If NS, remove interaction from model.   
+
+- What is now the estimated effect of running on the pulse rate? provide 95% CI.
+ 
