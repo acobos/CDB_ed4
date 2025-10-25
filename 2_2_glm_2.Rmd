@@ -1,0 +1,159 @@
+---
+title: "General Linear Model (2)"
+subtitle: "Assessing model assumptions"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      error = TRUE,
+                      comment = NA)
+
+library(tidyverse)
+library(mosaic)
+data(Births78)
+
+d <- Births78 %>% 
+  select(-year) %>% 
+  mutate(day = ifelse(wday %in% c("Sun", "Sat"),                  
+                      as.character(wday),                      
+                      "Work"),
+         day = factor(day, levels = c("Work", "Sat", "Sun"))) 
+
+rm(Births78)
+
+
+
+```
+
+
+
+## Assessing model assumptions
+
+Assumptions:
+
+1. Residuals are normal
+
+2. Variance of residuals is constant
+
+
+Assessment:
+
+1. QQ plot
+
+2. Plot of Residuals vs Predicted
+
+</br>
+
+In practice:  care with *influential* outliers!
+
+
+## Residual plots (with base R plotting system)
+
+
+```{r fig.height=4, fig.width=10}
+
+mod_dd <- lm(births ~ day + poly(day_of_year,5), data = d)
+par(mfrow = c(1,2), mar = c(4,8,2,2))    # two plots in a slide, margins
+plot(mod_dd, 1)                          # residuals vs fitted
+plot(mod_dd, 2)                          # QQ plot
+
+```
+
+## Holidays
+
+See [US holidays in 1978](https://www.timeanddate.com/calendar/?year=1978&country=1)
+
+Define new variable `holiday`  
+(only for working days to avoid double discounting if weekend!)
+
+```{r}
+h <- as.Date(c("1978-01-02", "1978-02-20", "1978-05-29", "1978-07-04", 
+               "1978-09-04", "1978-11-11", "1978-11-23", "1978-12-25"))
+
+d <- d %>% mutate(holiday = ifelse(date %in% h & day == "Work",
+                    "Yes", 
+                    "No"))
+
+```
+
+## Adding holidays to the model {.smaller}
+
+```{r}
+mod_ddh <- lm(births ~ day + holiday + poly(day_of_year,5) , data = d); summary(mod_ddh)
+
+```
+
+
+## Reassessing assumptions
+
+```{r fig.height=4, fig.width=10}
+par(mfrow = c(1,2), mar = c(4,8,2,2))
+plot(mod_ddh, 1)
+plot(mod_ddh, 2)
+
+```
+
+## Inspecting outliers
+
+```{r}
+
+d %>% 
+  mutate(residual = resid(mod_ddh)) %>%       # save residuals to d
+  slice(51, 353, 360) %>%                      # filters by row number
+  select(date, wday, holiday, residual)
+
+```
+
+1978-02-20: $\quad$ Presidents' Day, a public holiday in most US states. Nonetheless, many businesses and stores are open.
+
+1978-12-26: $\quad$ Day after Christmas. 
+
+1978-12-19: $\quad$ ??
+
+
+## R-squared for the final model
+
+In the plot, `births` and `predicted` are deviations from their means
+
+```{r echo = FALSE, fig.align='center', fig.height=3}
+
+list(residuals = resid(mod_ddh),
+     predicted = predict(mod_ddh) - mean(d$births),
+     births = d$births - mean(d$births)) -> k
+
+par(mar = c(2,5,3,1), mfrow=c(1,1))
+boxplot(k, border = c("red", "blue", "black"), 
+        horizontal = TRUE, las = 1)
+title(paste("R-squared:",
+                round(summary(mod_ddh)$r.squared,3)))
+
+
+
+```
+
+</br>
+
+The model explains `r round(100*summary(mod_ddh)$r.squared,1)` % of the total variation of `births`.  
+Not bad!
+
+## Exercise
+
+1. Fit the previous model (`day`, `holiday` and `day_of_year` with 5-degree polynomials).
+
+2. Fit a new model by adding the `day_of_month` to the previous model. 
+
+3. Compare the two models by looking at:
+
+    - R-square  
+    
+    - Adjusted R-squared (which penalizes model complexity)
+
+4. Are the two models nested? If yes, compare them with `anova()`. Does the addition of `day_of_month` improve the fit?
+
+

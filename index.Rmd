@@ -43,7 +43,7 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 |  |  |
 |------------------------------------|------------------------------------|
 | [General linear model: coefficients and GOF](https://acobos.github.io/CDB_ed4/2_1_glm_1.html) |[Solution to exes](2_1_glm_1_exe_solution.R)  |
-| [General linear model: model assumptions]() |  |
+| [General linear model: model assumptions](https://acobos.github.io/CDB_ed4/2_2_glm_2.html) |[Solution to exes](2_2_glm_2_exe_solution.R)  |
 | [General linear model: confounding and interaction]() |  |
 | [Logistic regression model 1]() |  |
 | [Logistic regression model 2]() |  |
