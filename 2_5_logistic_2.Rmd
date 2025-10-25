@@ -1,0 +1,131 @@
+---
+title: "Logistic Regression model (2)"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+
+
+
+```
+
+## Burns data
+
+```{r}
+library(tidyverse)
+library(aplore3)
+d <- burn1000         # just to have shorter name for the dataframe
+head(d)
+
+mod_s <- glm(death ~ tbsa, data = d, family=binomial)
+mod_i <- glm(death ~ inh_inj, data = d, family=binomial)  
+```
+
+
+## A third model with two predictors {.smaller}
+
+```{r}
+mod_si <- glm(death ~ inh_inj + tbsa, data = d, family=binomial)   
+summary(mod_si)
+```
+
+## Comparing nested models: Likelihood Ratio Test
+
+Use `anova()` with option `test="LRT"` 
+
+```{r}
+anova(mod_s, mod_si, test = "LRT")
+```
+
+Deviance is a measure of (lack of) fit: the lower, the better
+
+AIC is similar, but penalizing model complexity: the lower the better
+
+## The effect of inhalation injury {.smaller}
+
+```{r fig.height=2.5, fig.align='center'}
+exp(coef(mod_i)); exp(coef(mod_si))
+
+library(ggformula)
+gf_boxplot(tbsa ~ inh_inj, data=d) + coord_flip()
+```
+
+## Predicted values
+
+Use `predict()` with option `type="response"` to get predicted probabilities
+
+```{r}
+d <- d %>% mutate(pred = predict(mod_si,  type = "response"))
+arrange(d, pred) %>% head(3)    
+arrange(d, pred) %>% tail(3)   
+```
+
+## Assumptions 
+
+1. Large sample: 10-25 events and non-events per *parameter* (not per variable!) 
+
+2. Linearity on the logit scale (numeric predictors)
+
+3. No *influential* outliers
+
+</br>
+
+(1) In the burns data, 150 deaths and 850 alive, so:
+
+- Models with > 150/10 = 15 parameters are unreliable
+
+- Models with $\le$ 150/25 = 6 parameters are OK
+
+- Models with 6-15 parameters, care
+
+## Events per parameter {.smaller}
+
+How many parameters are estimated in this model?
+
+```{r}
+mod <- glm(death ~ (inh_inj + flame) * (tbsa * age) + gender + race , data=d, family = binomial)
+round(summary(mod)$coef,4)
+```
+
+## Linearity on the logit scale
+
+```{r fig.align='center', fig.height=3.5}
+d <- d %>% 
+  mutate(pred = predict(mod,  type = "response"),
+         logit = log(pred / (1 - pred)))
+
+gf_point(logit ~ tbsa, data = d) %>%
+  gf_smooth(method = "loess") 
+
+```
+
+## Influence measures 
+
+Cook's distance, standardized residuals and leverages
+
+```{r fig.align='center', fig.height=3.5}
+par(mfrow = c(1,2))
+plot(mod,4)
+plot(mod,5)
+```
+
+
+## Exercise
+
+1. Read the [Titanic data](https://raw.githubusercontent.com/acobos/Datasets/master/Mysterious_event.txt) as in the previous exercise and fit a model (`m2`) for `Survival` with `Class`, `Age` and `Sex` as predictors:
+
+    + What is the class with the lowest survival probability, given sex and age?  
+
+    + What is the OR of survival for females compared to males, for any given combination of class and age?  
+
+    + Use a Likelihood Ratio Test to compare model `m2` to model `m1` fitted in the previous exercise (with only `Class` as predictor).
+    
+    + Is the fit of `m2` significantly better than that of `m1`? 
