@@ -1,0 +1,254 @@
+---
+title: "Survival analysis"
+subtitle: "with packages `survival` and `survminer`"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning=FALSE, 
+                      error = TRUE,
+                      comment = NA,
+                      message = FALSE)
+```
+
+## Survival analysis
+
+Variable: $\quad$ time to an event (T), e.g., death, disease progresion, etc.
+
+Problem: $\quad$ _censored_ observations (right-censoring)
+
+- loss to follow-up 
+
+- no event by end of fixed study period
+
+Goals:  
+
+- describe survival as a function of time: $\quad$ _Kaplan-Meier_ method
+
+- compare survival in different sets of patients: $\quad$  _log-rank_ test
+
+- model survival as a function of covariates (age, sex, treatment, etc.):  
+$\quad$ _Cox proportional hazards_ model
+
+
+## Right censoring {.smaller}
+
+```{r echo=FALSE, fig.align='center', fig.width=12, fig.height=4}
+library(survival)
+data(ovarian)
+
+library(dplyr)
+ovarian %>%
+  arrange(futime, fustat) %>%
+  mutate(status = factor(fustat,
+                         levels = 0:1,
+                         labels = c("death", "censored")),
+         pid = 1:nrow(ovarian)) %>%
+  select(pid, days = futime, status) -> d
+
+
+library(ggformula)
+
+gf_segment(0 + days ~ pid + pid, data = d) %>%
+  gf_point(days ~ pid, shape = 16, data = d[d$status == "death",],
+           show.legend = TRUE) %>%
+  gf_labs(y = "Time (days)", x = "Patients", title="Dots are events") %>%
+  gf_hline(yintercept = 365 * 1:3, lty = 2) +
+  scale_x_reverse(lim=c(26,1), breaks = 1:26) +
+  coord_flip() -> plot
+
+library(gridExtra)
+library(grid)
+
+tableGrob(head(d,11), rows = NULL) -> dt
+            
+grid.arrange(plot, dt, ncol=2)
+
+  
+```
+
+
+How to represent censoring in a single variable?
+
+How to estimate survival at different times in the presence of censoring?
+
+
+## Survival and hazard functions {.smaller}
+
+__survival function__: probability of surviving _at least_ until time $t$ $\qquad \small{S(t) = \text{Prob}(T > t) = 1- F(t)}$
+
+__hazard function__: instantaneous death / event _rate_ at time $t$  $\qquad h(t) = \frac{f(t)}{S(t)} = - \frac{d \log S(t)}{d t}$
+
+__cumulative hazard function__:  accumulated risk until time $t$ $\quad \quad \quad \small{H(t) = - \log S(t)}$
+
+
+```{r echo =FALSE, fig.align='center', fig.height=3, fig.width=10}
+
+library(survival)
+data(lung)
+
+fit <- survfit(Surv(time, status) ~ 1, data = lung)
+
+par(mar=c(6,6,1,2), mfrow=c(1,3))
+
+# S(t)
+plot(fit, conf.int = FALSE, las = 1, 
+     xlab = "time (days)", ylab = "Survival probability")
+
+# h(t)
+library(bshazard)
+h <- bshazard(Surv(time, status) ~ 1, data = lung, verbose=FALSE)
+
+plot(h, conf.int = FALSE, las=1,
+     xlab = "time (days)",  yaxt="n")
+axis(2, las=1, cex.axis=0.7)
+
+# H(t)
+plot(fit$time, -log(fit$surv), type="n", las=1,
+     xlab = "time (days)", ylab = "Cumulative hazard")
+lines(fit$time, -log(fit$surv))
+
+
+
+```
+
+$h(t)$ is conditional on not having experienced the event before t. It's _not_ a probability.  
+$H(t)$ does not have an easy interpretation.
+
+
+
+## Advanced lung cancer
+
+Survival in `r nrow(survival::lung)` patients with advanced lung cancer from the North Central Cancer Treatment Group (Journal of Clinical Oncology. 12(3):601-7, 1994).  
+See `?lung` for more details.
+
+```{r}
+
+library(survival)
+head(lung, 4)
+
+```
+
+<font size="4">
+- time: survival time in days  
+- status: censoring status 1=censored, 2=dead  
+- sex: Male=1 Female=2  
+</font>
+
+
+## Survival objects {.smaller}
+
+The `Surv()` function creates suvival objects combining time and censoring/event information. You need to specify:
+
+- `time`  (the follow-up time) 
+
+- `event` (see `?Surv` for allowed event codings)
+
+The result is a value for each subject: the time followed by + if censored
+
+
+```{r}
+
+surv_obj <- Surv(time = lung$time, event = lung$status)        # creates a survival object
+                                                               
+head(surv_obj, 20)                                             # prints first 20 values                    
+
+```
+
+
+
+## Kaplan-Meier (KM) curve {.smaller}
+
+The `Survfit` function estimates survival using KM method. You need to specify a _formula_ with a survival object (before the tilde), and either 1 (for a single curve) or a factor (for a curve for each level).
+
+```{r fig.align='center', fig.height=3, fig.width=5}
+
+km <- survfit(Surv(time = time, event = status) ~ 1, data = lung)           # KM estimation
+library(survminer)
+ggsurvplot(km, xlab = "Days", legend = "none",                              # plots  survfit objects
+           censor=FALSE, surv.median.line = "hv")     
+
+```
+
+See `?ggsurvplot` for more customization options
+
+## KM estimates {.smaller}
+
+- Get KM survival estimates at specific times using function `summary()` on a `survfit` object.
+- Get median survival time by printing the `survfit` object  
+
+```{r}
+
+summary(km, time = c(365, 730))     # survival estimates at specified times
+km                                  # median survival time
+
+```
+
+## KM estimates {.smaller}
+
+- Get other quantiles using the `quantile()` function on the `survfit` object  
+
+```{r}
+
+quantile(km)
+
+```
+
+
+
+## Log-rank test {.smaller}
+
+To compare survival curves with this test, use function `survdiff()` on a formula, with the factor defining groups after the tilde.
+
+```{r}
+lung <- lung %>% mutate(sex = factor(sex, levels=1:2, labels = c("male", "female")))
+survdiff(Surv(time, status) ~ sex, data = lung)      # note formula
+
+```
+
+This test can be used if:
+
+- Groups are independent (different subjects)
+
+- With similar, non-informative censoring pattern, and
+
+- Proportional hazards $\implies$ curves do not cross
+
+## Survival curves with log-rank test {.smaller}
+
+```{r fig.align='center', fig.height=4, fig.width=6}
+
+ggsurvplot(survfit(Surv(time, status) ~ sex, data = lung),
+           pval = TRUE,                                     # plots the p-value
+           pval.method = TRUE)                              # plots the method (test)
+
+```
+
+
+
+
+## Exercise {.smaller}
+
+Using the `ovarian` dataset in package `survival` (see `?ovarian`):
+
+1. Define factors for `rx (1="A", 2="B")`, `resid.ds (1="no", 2="yes")` and `ecog.ps (1="good", 2="bad")`, and factor to dichotomize age, with labels "old" (if age >=50), or "young" (otherwise).
+
+1. Create a survival object from `futime` and `fustat`, and print it.
+
+1. Use this object to fit a KM curve for each treatment group, and plot them using option `risk.table = TRUE` in the `ggsurvplot()` function call.
+
+1. What is the median survival time for each treatment?
+
+1. What are the survival estimates at 1 and 2 years?
+
+1. Compare the two curves with a log-rank test.
+
+1. Examine the predictive value of the residual disease by plotting a survival curve for each residual disease group, showing the result of the log-rank test.
+
+
+
+

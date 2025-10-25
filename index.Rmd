@@ -47,7 +47,7 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 | [General linear model: confounding and interaction](https://acobos.github.io/CDB_ed4/2_3_glm_3.html) |[Solution to exes](2_3_glm_3_exe_solution.R)  |
 | [Logistic regression model 1](https://acobos.github.io/CDB_ed4/2_4_logistic_1.html) |[Solution to exes](2_4_logistic_1_exe_solution.R)  |
 | [Logistic regression model 2](https://acobos.github.io/CDB_ed4/2_5_logistic_2.html) |[Solution to exes](2_5_logistic_2_exe_solution.R)   |
-| [Survival analysis 1: Kaplan-Meier estimates and log-rank test]() |  |
+| [Survival analysis 1: Kaplan-Meier estimates and log-rank test](https://acobos.github.io/CDB_ed4/2_6_survival.html) |[Solution to exes](2_6_survival_exe_solution.R)  |
 | [Survival analysis 2: Cox proportional hazards model]() |  |
 
 \
