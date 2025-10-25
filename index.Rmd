@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = FALSE,
 \
 \
 
-Recommended pre-course reading: [Statistical Inference](https://acobos.github.io/DA/statistical-inference.html).
+## Recommended pre-course reading: [Statistical Inference](https://acobos.github.io/DA/statistical-inference.html).
 
 \
 \
@@ -35,6 +35,12 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 | [Permutation tests and the bootstrap](https://acobos.github.io/CDB_ed4/1_6_bootstrap.html)  |[Solution to exes](1_6_bootstrap_exe_solution.R) |
 | [ROC curves and AUC](https://acobos.github.io/CDB_ed4/1_7_roc_auc.html) |[Solution to exes](1_7_roc_auc_exe_solution.R)  |
 | [Association](https://acobos.github.io/CDB_ed4/1_8_association.html) | [Solution to exes](1_8_association_exe_solution.R) |
+
+- Do not use histograms to assess normality: [find out why](https://statisticsbyjim.com/basics/assessing-normality-histograms-probability-plots/).
+
+- [Introduction to Bootstrapping in Statistics with an Example](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/). A short and intuitive introduction to the bootstrap.
+
+- [Packages for ROC curves](https://rviews.rstudio.com/2019/03/01/some-r-packages-for-roc-curves/)
 
 \
 
@@ -54,9 +60,7 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 
 \
 
-## Readings 
-
-### General
+## Further reading 
 
 - A couple of free online books this course is loosely based on:
   - [Data Analysis for Clinical Researchers (Chap. 7 and 8)](https://acobos.github.io/DA/index.html). 
@@ -67,13 +71,8 @@ Recommended pre-course reading: [Statistical Inference](https://acobos.github.io
 - [The Elements of statistical learning](https://hastie.su.domains/ElemStatLearn/), by T. Hastie, R. Tibshirani and J. Friedman. A very good book on both classical and modern modeling methods, such as random forest, support vector machines or neural networks. Freely available as pdf.
 
 
-### Specific
 
-- Do not use histograms to assess normality: [find out why](https://statisticsbyjim.com/basics/assessing-normality-histograms-probability-plots/).
 
-- [Introduction to Bootstrapping in Statistics with an Example](https://statisticsbyjim.com/hypothesis-testing/bootstrapping/). A short and intuitive introduction to the bootstrap.
-
-- [Packages for ROC curves](https://rviews.rstudio.com/2019/03/01/some-r-packages-for-roc-curves/)
 
 
 
