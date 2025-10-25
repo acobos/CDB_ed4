@@ -1,0 +1,240 @@
+---
+title: "General Linear Model (1)"
+subtitle: "Coefficients and goodness-of-fit"
+author: "Albert Cobos"
+output: 
+  ioslides_presentation:
+    widescreen: true
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      error = TRUE,
+                      comment = NA)
+
+```
+
+
+## US births, 1878 
+
+The `mosaic` package contains dataframe `Births78`
+
+A day by day record of the number of births in the United States in 1978.
+
+```{r}
+
+library(mosaic)
+head(Births78); summary(Births78$births)
+
+```
+
+## Births by date: $\quad$ interpretation?
+
+```{r fig.align='center'}
+library(ggformula)
+gf_point(births ~ date , data = Births78) 
+
+```
+
+## Working days
+
+```{r}
+d <- Births78 %>% 
+  select(-year) %>% 
+  # new variable day (Work/Sun/Sat)
+  mutate(day = ifelse(wday %in% c("Sun", "Sat"),                  
+                      as.character(wday),                         # note as.character()
+                      "Work"),
+         day = factor(day, levels = c("Work", "Sat", "Sun")))     # define as factor
+head(d)
+
+```
+
+
+## Explaining the variability of births
+
+```{r echo=TRUE, fig.align='center', fig.height = 3.5}
+gf_point(births ~ date, col= ~ day, data = d)
+```
+
+- Day: working, saturday or sunday
+
+- Month: increasing trend, but non-linear, non-monotonic
+
+
+## A first model, based on day {.smaller}
+
+```{r}
+mod_d <- lm(births ~ day, data = d)
+summary(mod_d)
+```
+
+
+## Model coefficients: $\quad$ interpretation
+
+If explanatory variable is a factor:
+
+- Intercept:  $\qquad \quad$ the mean of `births` in the *reference level* (`Working`)
+
+- daySat, daySun: $\quad$ the difference of mean `births` wrt *reference level*  
+
+
+```{r}
+
+coef(mod_d)                    # extract coefficients from model mpd_day
+mean(births ~ day, data = d)     # means by day
+
+```
+
+
+## Model coefficients:  $\quad$ 95% CI's 
+
+```{r}
+coef(mod_d)
+confint(mod_d)           # gets the 95% confidence intervals for coefficients
+```
+
+
+## Goodness-of-fit: $\quad$ R-squared
+
+Total variability = Explained (by day) + Residual
+
+```{r echo=FALSE, fig.align='center', fig.height=3.5}
+
+# gf_boxplot(births ~ "All", data = d) %>%
+#   gf_boxplot(births ~ day, data = d, col = ~ day) +
+#   coord_flip() + 
+#   ggtitle(paste("R-squared:",
+#                 round(summary(mod_d)$r.squared,3)))
+
+d %>% 
+  mutate(day = "All") %>% 
+  select(births, day) %>% 
+  bind_rows(select(d, births, day)) %>% 
+  mutate(day = factor(day,
+                      levels = c("All", "Work", "Sat", "Sun")),
+         day = forcats::fct_rev(day))  %>% 
+  gf_boxplot(births ~ day, col = ~ day, alpha = 0.2)  %>% 
+  gf_jitter(births ~ day, col = ~ day, alpha = .3) %>% 
+  gf_refine(coord_flip(),
+            ggtitle(paste("R-squared:",
+                          round(summary(mod_d)$r.squared,3)))) +
+  scale_color_manual(values = c("#00BFC4", "#00BA38", "#F8766D", "black")) +
+  theme(legend.position = "none",
+        text = element_text(size = 16))
+
+```
+
+`r round(100 * summary(mod_d)$r.squared,1)` % of the total variability of `births` is explained by `day`.
+
+The higher the R-squared value, the better the fit.
+
+
+## The first model, graphically
+
+```{r fig.align='center', fig.height = 3.5}
+d$pred <- predict(mod_d)                                # get predicted values
+
+gf_point(births ~ date, col = ~ day, data = d) %>%
+  gf_line(pred ~ date)                                  # add them to plot 
+
+```
+
+
+
+## A second model, adding month {.smaller}
+
+```{r}
+
+mod_dm <- lm(births ~ day + month, data = d); summary(mod_dm)  
+
+```
+
+## Model coefficients: $\quad$ interpretation
+
+If explanatory variable is numeric, the coefficient is a **slope**:
+
+- There is a `r round(coef(mod_dm)["month"],1)` increase in `births` per unit increase in month  
+
+
+```{r echo = F, fig.align='center', fig.height = 3.5}
+d$pred <- predict(mod_dm)       
+
+gf_point(births ~ month, col = ~ day, data = d) %>%
+  gf_line(pred ~ month, col = ~ day) +
+  scale_x_continuous(breaks=1:12)
+```
+
+
+## The second model, graphically
+
+```{r fig.align='center', fig.height = 3.5}
+d$pred <- predict(mod_dm)                               # get predicted values
+
+gf_point(births ~ date, col = ~ day, data = d) %>%
+  gf_line(pred ~ date)                                  # add predicted values to plot
+```
+
+
+## A third model, using polynomials for month {.smaller}
+
+```{r}
+mod_dm5 <- lm(births ~ day + poly(month,5), data = d); summary(mod_dm5)
+```
+
+
+## The third model:  $\quad$ polynomials for month 
+
+```{r echo=FALSE, fig.align='center'}
+d$pred <- predict(mod_dm5)                      # get predicted values
+
+gf_point(births ~ month, col = ~ day, data = d) %>%
+  gf_lm(pred ~ month, col = ~ day, formula = y ~ poly(x,5)) +
+  scale_x_continuous(breaks=1:12)
+
+```
+
+
+
+## The third model, graphically
+
+```{r, echo=TRUE, fig.align='center', fig.height=3.5}
+
+d$pred <- predict(mod_dm5)                      # get predicted values
+
+gf_point(births ~ date, col= ~ day, data = d) %>%
+  gf_line(pred ~ date, col = ~day)              # add predicted values to plot
+
+```
+
+## Comparing nested models {.smaller}
+
+Two models are nested if one is contained in the other 
+
+```{r}
+
+anova(mod_d, mod_dm, mod_dm5)                          # compare models
+
+```
+
+- Significant improvement in fit by adding month (Model 2) 
+- Significant improvement in fit by adding polynomial terms for month (Model 3) 
+
+## Execise
+
+1. With the `births` dataset, fit a model with predictors
+
+    - `day`, and 
+
+    - `day_of_year` (instead of `month`) using 5-degree polynomials
+
+2. Get the summary of the model and look at R-squared
+
+3. Show the model graphically
+
+4. Comparing this model to the previous one (using `month`), which one do you prefer, and why?
+
+
