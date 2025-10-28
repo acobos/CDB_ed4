@@ -33,7 +33,7 @@ head(d)
 ```
 
 
-## Birth weight related to smoking?
+## Low birth weight (LBW) related to smoking?
 
 ```{r}
 bw_smoke <- mosaic::tally(bw ~ smoke, data = d)    # save for later use
@@ -52,6 +52,9 @@ chisq.test(bw_smoke)
 ```
 
 \
+
+Evidence of a different probability of LBW in smokers and non-smokers.
+
 \
 
 Yates' continuity correction used by default in 2x2 tables. 
@@ -89,6 +92,7 @@ Better when expected frequencies are low
 fisher.test(bw_ht)
 ```
 
+No evidence of a different probability of LBW in HT and non-HT.
 
 ## How strong is the association?
 
@@ -121,7 +125,21 @@ For definitions of these measures see [here](https://acobos.github.io/DA/analysi
 bw_smoke
 ```
 
-This *is not* the table we need!  Let's transpose it with `t()`...
+This *is not* the table we need!  Let's transpose it with function `t()`...
+
+## Transposing the table
+
+```{r}
+t(bw_smoke)
+
+```
+
+\
+
+```{r}
+bw_smoke %>% t()                 # same, using the pipe
+```
+
 
 ## Measures of association
 

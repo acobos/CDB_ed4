@@ -3228,7 +3228,7 @@ head(d)</pre>
 89 normal  18 107 white     smoker   0 no-AHT  1   0 2600
 91 normal  21 124 other non-smoker   0 no-AHT  0   0 2622</pre>
 
-</article></slide><slide class=""><hgroup><h2>Birth weight related to smoking?</h2></hgroup><article  id="birth-weight-related-to-smoking">
+</article></slide><slide class=""><hgroup><h2>Low birth weight (LBW) related to smoking?</h2></hgroup><article  id="low-birth-weight-lbw-related-to-smoking">
 
 <pre class = 'prettyprint lang-r'>bw_smoke &lt;- mosaic::tally(bw ~ smoke, data = d)    # save for later use
 bw_smoke   </pre>
@@ -3258,7 +3258,11 @@ bw       smoker non-smoker
 data:  bw_smoke
 X-squared = 4.2359, df = 1, p-value = 0.03958</pre>
 
-<p><br/><br/></p>
+<p><br/></p>
+
+<p>Evidence of a different probability of LBW in smokers and non-smokers.</p>
+
+<p><br/></p>
 
 <p>Yates’ continuity correction used by default in 2x2 tables.</p>
 
@@ -3320,6 +3324,8 @@ sample estimates:
 odds ratio 
   3.340866 </pre>
 
+<p>No evidence of a different probability of LBW in HT and non-HT.</p>
+
 </article></slide><slide class=""><hgroup><h2>How strong is the association?</h2></hgroup><article  id="how-strong-is-the-association">
 
 <p>You MUST provide some measure of association measure, and 95% CI</p>
@@ -3370,7 +3376,25 @@ bw       smoker non-smoker
   low        30         29
   normal     44         86</pre>
 
-<p>This <em>is not</em> the table we need! Let’s transpose it with <code>t()</code>…</p>
+<p>This <em>is not</em> the table we need! Let’s transpose it with function <code>t()</code>…</p>
+
+</article></slide><slide class=""><hgroup><h2>Transposing the table</h2></hgroup><article  id="transposing-the-table">
+
+<pre class = 'prettyprint lang-r'>t(bw_smoke)</pre>
+
+<pre >            bw
+smoke        low normal
+  smoker      30     44
+  non-smoker  29     86</pre>
+
+<p><br/></p>
+
+<pre class = 'prettyprint lang-r'>bw_smoke %&gt;% t()                 # same, using the pipe</pre>
+
+<pre >            bw
+smoke        low normal
+  smoker      30     44
+  non-smoker  29     86</pre>
 
 </article></slide><slide class=""><hgroup><h2>Measures of association</h2></hgroup><article  id="measures-of-association-1">
 
