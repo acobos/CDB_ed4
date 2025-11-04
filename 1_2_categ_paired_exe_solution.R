@@ -26,7 +26,7 @@ d %>%
   filter(cystoscopy == "Positive") %>%         # keep only these patients!
   tally(bta ~ cytology, data=.)                
 
-# convenient altervnative
+# convenient alternative
 tally(bta ~ cytology, data=d, subset = cystoscopy == "Positive") %>% 
   mcnemar.test(x)
 
