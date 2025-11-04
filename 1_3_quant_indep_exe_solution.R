@@ -1,4 +1,5 @@
 library(tidyverse)
+library(ggformula)
 
 # Australian athletes data in package DAAG ----
 library(DAAG)
@@ -26,9 +27,12 @@ res$estimate
 res$estimate[1]                      # mean in group f
 res$estimate[2]                      # mean in group m
 res$estimate[1] - res$estimate[2]    # their difference (f-m)
-
 res$conf.int                         # the CI (and confidence level)
 
+# dislike negatives?  use fact_rev()
+res <- t.test(hc ~ fct_rev(sex), data = ais)
+res$estimate[1] - res$estimate[2]    
+res$conf.int                     
 
 # Wilcoxon RST
 wilcox.test(hc ~ sex, data = ais)
@@ -51,7 +55,6 @@ gf_boxplot(total_c ~ sex, data = d)  %>%
 # A hardly credible far outlier in females
 t.test(total_c ~ sex, data = d)
 wilcox.test(total_c ~ sex, data = d)
-
 
 # see what happens if we remove this case
 t.test(total_c ~ sex, data = filter(d, total_c > 100))
