@@ -14,12 +14,12 @@ knitr::opts_chunk$set(echo = TRUE,
                       comment = NA,
                       message = FALSE)
 
-# library(pander)
 ```
 
 ## Weight and smoking cessation
 
 ```{r echo=TRUE}
+library(tidyverse)
 d <- rio::import("data/smoking_cessation.txt")
 head(d)
 ```
@@ -53,16 +53,23 @@ Paired tests are based on the *individual differences*.
 
 ## Paired data and individual differences
 
-The mean of individual differences = difference of means
+
 
 ```{r}
-library(tidyverse)
 d <- mutate(d, change = pos - pre)   # compute individual differences
 head(d, 3)
-sapply(d, mean)                      # to get the mean of all variables in d
+
 ```
 
-``r paste0(mean(d$pos), " - ", mean(d$pre), " = ", mean(d$pos) - mean(d$pre))``
+Difference of pre & pos means = mean of individual differences
+
+```{r}
+sapply(d, mean) %>% round(1)                     # compute mean of all vars in d
+```
+
+
+
+``r paste0(round(mean(d$pos),1), " - ", round(mean(d$pre),1), " = ", round(mean(d$pos) - mean(d$pre),1))``
 
 
 ## Boxplot (with mean overlaid)
@@ -77,9 +84,9 @@ gf_boxplot(change ~ "", data = d, xlab = "", ylab = "change = pos - pre") %>%
 
 In this case:
 
-- distribution is  (approximately) symmetrical
+- approximate symmetry (i.e., *slight* asymmetry)
 
-- a single outlier in smokers, but not influential (mean $\approx$ median)
+- a single outlier but not influential (mean $\approx$ median)
 
 Parametric test is OK
 
@@ -92,7 +99,7 @@ t.test(d$pos, d$pre, paired = TRUE)            # paired t-test on pos vs pre
 
 ## When conditions for the *t*-test are not met
 
-Murder rates (per 100000 inhabitants) by gender in 198 countries
+Murder rates (per 100,000 inhabitants) by gender in 198 countries
 
 ```{r }
 load("data/murder_rates.RData")

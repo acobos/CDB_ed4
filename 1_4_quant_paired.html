@@ -3209,7 +3209,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 
 <slide class=""><hgroup><h2>Weight and smoking cessation</h2></hgroup><article  id="weight-and-smoking-cessation">
 
-<pre class = 'prettyprint lang-r'>d &lt;- rio::import(&quot;data/smoking_cessation.txt&quot;)
+<pre class = 'prettyprint lang-r'>library(tidyverse)
+d &lt;- rio::import(&quot;data/smoking_cessation.txt&quot;)
 head(d)</pre>
 
 <pre >   pre  pos
@@ -3250,10 +3251,7 @@ head(d)</pre>
 
 </article></slide><slide class=""><hgroup><h2>Paired data and individual differences</h2></hgroup><article  id="paired-data-and-individual-differences">
 
-<p>The mean of individual differences = difference of means</p>
-
-<pre class = 'prettyprint lang-r'>library(tidyverse)
-d &lt;- mutate(d, change = pos - pre)   # compute individual differences
+<pre class = 'prettyprint lang-r'>d &lt;- mutate(d, change = pos - pre)   # compute individual differences
 head(d, 3)</pre>
 
 <pre >   pre  pos change
@@ -3261,12 +3259,14 @@ head(d, 3)</pre>
 2 59.7 65.6    5.9
 3 63.8 70.3    6.5</pre>
 
-<pre class = 'prettyprint lang-r'>sapply(d, mean)                      # to get the mean of all variables in d</pre>
+<p>Difference of pre &amp; pos means = mean of individual differences</p>
+
+<pre class = 'prettyprint lang-r'>sapply(d, mean) %&gt;% round(1)                     # compute mean of all vars in d</pre>
 
 <pre >   pre    pos change 
-59.676 63.592  3.916 </pre>
+  59.7   63.6    3.9 </pre>
 
-<p><code>63.592 - 59.676 = 3.916</code></p>
+<p><code>63.6 - 59.7 = 3.9</code></p>
 
 </article></slide><slide class=""><hgroup><h2>Boxplot (with mean overlaid)</h2></hgroup><article  id="boxplot-with-mean-overlaid">
 
@@ -3280,8 +3280,8 @@ gf_boxplot(change ~ &quot;&quot;, data = d, xlab = &quot;&quot;, ylab = &quot;ch
 <p>In this case:</p>
 
 <ul>
-<li><p>distribution is (approximately) symmetrical</p></li>
-<li><p>a single outlier in smokers, but not influential (mean \(\approx\) median)</p></li>
+<li><p>approximate symmetry (i.e., <em>slight</em> asymmetry)</p></li>
+<li><p>a single outlier but not influential (mean \(\approx\) median)</p></li>
 </ul>
 
 <p>Parametric test is OK</p>
@@ -3318,7 +3318,7 @@ mean difference
 
 </article></slide><slide class=""><hgroup><h2>When conditions for the <em>t</em>-test are not met</h2></hgroup><article  id="when-conditions-for-the-t-test-are-not-met">
 
-<p>Murder rates (per 100000 inhabitants) by gender in 198 countries</p>
+<p>Murder rates (per 100,000 inhabitants) by gender in 198 countries</p>
 
 <pre class = 'prettyprint lang-r'>load(&quot;data/murder_rates.RData&quot;)
 head(d)</pre>
