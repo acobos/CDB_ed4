@@ -13,8 +13,7 @@ gf_boxplot(difference ~ "", data=d, xlab="", ylab="difference women - men)")  %>
   gf_summary(fun = mean, geom="point", color="red")  %>% 
   gf_refine(coord_flip())
 
-# slightly asymmetric, no outliers, n = 191
-# difference mean and median doesn't look very relevant (< 1 y)
+# slight asymmetry, no outliers, n = 191
 ## t-test is OK
 t.test(d$difference)
 t.test(d$LE_women, d$LE_men, paired = TRUE)        # equivalent
@@ -24,3 +23,8 @@ res <- t.test(d$LE_women, d$LE_men, paired = TRUE)
 names(res)
 res$estimate
 res$conf.int
+
+paste(round(res$estimate,1),
+      " (95% CI: ",
+      paste(round(res$conf.int,1), collapse = ", "),
+      ")", sep="")
