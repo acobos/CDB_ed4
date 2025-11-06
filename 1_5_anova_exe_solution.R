@@ -16,6 +16,8 @@ d <- MASS::birthwt %>%
 
 head(d, 4)        
 
+d %>% select(ftv, ftv_grouped) %>% arrange(ftv) %>% unique()
+
 
 # sample sizes 
 tally(~ftv_grouped, data = d)
