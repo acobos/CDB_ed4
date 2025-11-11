@@ -29,7 +29,7 @@ d <- MASS::birthwt %>%
   mutate(race = factor(race, levels = 1:3, labels = c("white", "black", "other")),
          low = factor(low, levels = c(1,0), labels = c("Low", "Normal")),
          smoke = factor(smoke, levels = c(1,0), labels = c("smoker", "non_smoker")),
-         lwt_kg = 0.453592 * lwt)  # mother's weight: convert pounds to kg)
+         lwt_kg = round(0.453592 * lwt,1))  # mother's weight: convert pounds to kg)
 
 head(d, 4)        
 
@@ -39,7 +39,7 @@ head(d, 4)
 ## Mother's weight
 
 ```{r fig.height = 3, fig.align='center'}
-gf_boxplot(lwt ~ smoke, data = d) %>% 
+gf_boxplot(lwt_kg ~ smoke, data = d) %>% 
   gf_summary(fun = mean, geom = "point", color = "red") %>% 
   gf_refine(coord_flip())
 
@@ -49,7 +49,7 @@ gf_boxplot(lwt ~ smoke, data = d) %>%
 ## Wilcoxon rank sum test 
 
 ```{r}
-wilcox.test(lwt ~ smoke, data = d)
+wilcox.test(lwt_kg ~ smoke, data = d)
 ```
 
 \
@@ -60,7 +60,7 @@ No evidence of a difference in location.
 ## Hodges-Lehmann estimator (_pseudomedian_) {.smaller}
 
 ```{r}
-wilcox.test(lwt ~ smoke, data = d, conf.int =TRUE)
+wilcox.test(lwt_kg ~ smoke, data = d, conf.int =TRUE)
 ```
 
 Estimates the difference in location:
@@ -95,7 +95,7 @@ For an in depth coverage of the topic, see:
 
 ```{r}
 set.seed(1)                                  # for reproducibility
-MKinfer::perm.t.test(lwt ~ smoke, data = d)
+MKinfer::perm.t.test(lwt_kg ~ smoke, data = d)
 ```
 
 No evidence of a difference in means.
@@ -106,7 +106,7 @@ No evidence of a difference in means.
 ```{r}
 
 set.seed(1)                                  # for reproducibility
-MKinfer::boot.t.test(lwt ~ smoke, data = d)
+MKinfer::boot.t.test(lwt_kg ~ smoke, data = d)
 ```
 
 
@@ -118,7 +118,7 @@ Total cost of care (US dollars 1992) were recorded, including study drug, concom
 
 Questions:
 
-1. Is there any evidence different costs depending on the treatment? 
+1. Is there any evidence of different costs depending on the treatment? 
 
 1. What is the estimate of the difference in mean costs with A or B?
 
