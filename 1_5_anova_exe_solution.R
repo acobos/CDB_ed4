@@ -16,7 +16,8 @@ d <- MASS::birthwt %>%
 
 head(d, 4)        
 
-d %>% select(ftv, ftv_grouped) %>% arrange(ftv) %>% unique()
+# verify recoding
+d %>% select(ftv, ftv_grouped) %>% unique() %>% arrange(ftv)
 
 
 # sample sizes 
@@ -28,7 +29,7 @@ gf_boxplot(bwt ~ ftv_grouped, data = d) %>%
   gf_summary(fun = mean, geom = "point", color = "red") %>% 
   gf_refine(coord_flip())
 
-# Nothing to worry about: a single, non-influential outlier (n = 100).
+# Nothing to worry about: a single, non-influential outlier.
 
 # ANOVA
 res <- aov(bwt ~ ftv_grouped, data = d)
