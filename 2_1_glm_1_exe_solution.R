@@ -27,11 +27,7 @@ d$pred <- predict(mod_2)
 
 # plot observed and predicted values for new model
 gf_point(births ~ date, col= ~ day, data = d) %>%
-  gf_line(pred ~ date, col = ~day)   
-
-# or use 
-gf_point(births ~ date, col= ~ day, data = d) %>% 
-  gf_lm(formula=y~poly(x,5))
+  gf_line(predict(mod_2) ~ date, col = ~day, linewidth = 0.8)   
 
 # new model looks smoother variation along time
 # also, slightly better fit:  Ajusted R-squared  
