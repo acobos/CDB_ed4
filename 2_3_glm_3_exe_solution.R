@@ -1,84 +1,84 @@
 library(tidyverse)
 
-# data ----
-d <- rio::import("http://www.statsci.org/data/oz/ms212.txt")
-head(d)
+
+# Read & prepare data 
+
+library(GLMsData)
+data(lungcap)                                            # get the dataset
+
+d <- lungcap %>% 
+  janitor::clean_names() %>%
+  mutate(height = round(2.54 * ht),                       # converts from inches to cm
+         gender = as.factor(gender),                      # creates factor for gender
+         smoke = factor(smoke,                            # creates factor for smoke
+                        levels = 0:1,
+                        labels = c("no", "yes"))) %>% 
+  select(-ht)                                             # drops ht
+
+rm(lungcap)                                               # removes lungcap
 
 
-# missings ?
-colSums(is.na(d))
+# Exercise 1 ------------------------------------------------------------------
 
-# subset to drop missings and create a factor group
-d <- d %>% 
-  na.omit() %>% 
-  mutate(group = factor(Ran, levels=c(2,1), labels=c("Sat","Ran")))
-
-colSums(is.na(d))
-levels(d$group)
+# Get a summary of dataset variables
+summary(d)
 
 
-# linear model for Pulse2 with group as predictor ----
+# subset non smokers
+dns <- filter(d, smoke == "no")
 
-# look at data first!
+# Fit a model for FEV with height and gender as  explanatory variables
+model1 <- lm(fev ~ height + gender, data = dns) 
+summary(model1)
+
 library(ggformula)
-gf_boxplot(Pulse2 ~ group, data = d)  +
-  stat_summary(fun.y=mean, geom="point", color="red") +
-  coord_flip()
+gf_point(fev ~ height, col = ~ gender, data =dns, alpha = 0.3)  %>% 
+  gf_line(predict(model1) ~ height, col = ~ gender, data = dns) 
 
-# model and summary
-m1 <- lm(Pulse2 ~ group, data = d)
-summary(m1)
+plot(model1, 1)
+plot(model1, 2)
 
-# did running have an effect on the pulse rate?
-# Yes: a very significant p-value for groupRan
-
-# by how much the pulse is affected by running? provide a 95 CI
-coef(m1)
-confint(m1)
-
-coef(m1)[2]                # effect of running...
-confint(m1)[2,]            # and 95% CI
+# Fit a new model using a 2nd degree polynomial for `height`
+model2 <- lm(fev ~ poly(height,2) + gender, data = dns) 
 
 
-# predicted value of Pulse2 for students that sat
-# since Sat is the reference level, the Intercept
-coef(m1)[1]
-
-# predicted values of Pulse2 for those who Ran:
-# the Intercept plus the estimated coefficient for groupRan
-coef(m1)[1] + coef(m1)[2]
-sum(coef(m1))               # same (because only these two coeffs)
+# show model graphically 
+gf_point(fev ~ height, col = ~ gender, data =dns, alpha = 0.3)  %>% 
+  gf_line(predict(model2) ~ height, col = ~ gender, data = dns) 
 
 
-# Verify by computing the means of Pulse2 in both groups
-library(mosaic)
-mean(Pulse2 ~ group, data = d)
-
-# model with both group and Pulse1 as predictors ----
-
-# look at data first!
-gf_point(Pulse2 ~ Pulse1, col= ~ group, data = d)
-
-# test for a possible interaction between predictors
-m2 <- lm(Pulse2 ~ group + Pulse1 + group:Pulse1, data = d)
-summary(m2) 
-
-# same, excluding outlier in Ran
-m2 <- lm(Pulse2 ~ group + Pulse1 + group:Pulse1, data = d, 
-         subset = Pulse1 < 125)
-summary(m2) 
-
-# still not significant, so remove interaction (and keep outlier)
-m3 <- lm(Pulse2 ~ group + Pulse1, data = d)
-summary(m3) 
-
-# what is now the estimated effect of running on the pulse rate? provide 95% CI
-coef(m3)[2]
-confint(m3)[2,]
-
-# compare to model 1
-coef(m1)[2]
-confint(m1)[2,]
+# assess assumptions
+plot(model2, 1)
+plot(model2, 2)
 
 
+# model improvement
+summary(model1)$adj.r.squared
+summary(model2)$adj.r.squared
 
+anova(model1, model2)
+
+
+# refit with smokers
+model2 <- lm(fev ~ poly(height,2) + gender + smoke, data = d) 
+summary(model2)
+
+gf_point(fev ~ height, col = ~ gender, data =dns, alpha = 0.3)  %>% 
+  gf_line(predict(model2) ~ height, col = ~ gender, data = dns) 
+
+
+# Exercise 2 ------------------------------------------------------------------
+
+
+# boxplots
+gf_boxplot(fev ~ smoke, data = d) + coord_flip()
+gf_boxplot(age ~ smoke, data = d) + coord_flip()
+
+
+# 1st model
+model1 <- lm(fev ~ smoke, data = d)
+summary(model1)
+
+# 2nd model
+model2 <- lm(fev ~ smoke + age, data = d)
+summary(model2)

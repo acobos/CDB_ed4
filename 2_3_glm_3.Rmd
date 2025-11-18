@@ -193,43 +193,45 @@ title("m2: with interaction")
 
 
 
-## Exercise
+## Exercise 1
 
-A simple experiment on [pulse rate before and after physical exercise](http://www.statsci.org/data/oz/ms212.html)
+Use this code to read and prepare the `GLMsData::lungcap` dataset on lung capacity and smoking in 654 youth (see `?GLMsData::lungcap`).
 
-```{r read_data, echo=TRUE}
-d <- rio::import("http://www.statsci.org/data/oz/ms212.txt")
+```{r}
+library(tidyverse)
+library(GLMsData)
+data(lungcap)                                            # get the dataset
+
+d <- lungcap %>% 
+  janitor::clean_names() %>%
+  mutate(height = round(2.54 * ht),                       # converts from inches to cm
+         gender = as.factor(gender),                      # creates factor for gender
+         smoke = factor(smoke,                            # creates factor for smoke
+                        levels = 0:1,
+                        labels = c("no", "yes"))) %>% 
+  select(-ht)                                             # drops ht
+
 ```
 
-\
+## Exercise 1 (cont.)
 
-`Pulse1`: pulse rate before intervention.  
+1. Get a summary of the dataset variables
 
-`Ran`: randomized intervention, either 1=Ran, or 2=Sat, for 1 minute.  
+1. Subset non-smokers into dataframe `dns`
 
-`Pulse2`: pulse rate after intervention 
+1. Fit a model for FEV with `height` and `gender` as  explanatory variables and:
+  - get a summary of the model
+  - interpret the model coefficients
+  - plot the `fev` against `height` using color for gender,and overlay predicted values.
+  - assess model assumptions graphically. Is there any non-linearity?  If yes, does a polynomial improve the fit?  
+  
 
+## Exercise 2
+  
+1. Using all cases in dataframe `d`, produce boxplots of:
+    - `fev` by `smoke`, and 
+    - `age` by `smoke`. 
 
-## Exercise (cont)
+1. Fit a model for `fev` with `smoke` as predictor; interpret the model coefficients.
 
-1. Are there any missing values in `d `? If yes, subset `d` to eliminate them.
-
-1. Create factor `group`, with levels "Sat" and "Ran" (in this order).
-
-1. Fit a linear model for `Pulse2` with `group` as predictor. From the model summary:
-    + Did running have an effect on the pulse rate?  
-    + By how much the pulse is affected by running? provide a 95 CI.  
-    + What is the predicted value of `Pulse2` for:  
-        + students that sat?  
-        + those who ran?  
-    + Verify by computing the means of `Pulse2` in both groups.
-
-
-## Exercise (cont)
-
-4: Fit a second model with both `group` and `Pulse1` as predictors, and:  
-
-- Test for a possible interaction. If NS, remove interaction from model.   
-
-- What is now the estimated effect of running on the pulse rate? provide 95% CI.
- 
+1. Fit a second model adding `age` as predictor; do you think `age` is a confounder for `smoke`?
