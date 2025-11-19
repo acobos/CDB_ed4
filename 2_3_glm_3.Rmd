@@ -213,25 +213,31 @@ d <- lungcap %>%
 
 ```
 
-## Exercise 1 (cont.)
 
-1. Get a summary of the dataset variables
-
-1. Subset non-smokers into dataframe `dns`
-
-1. Fit a model for FEV with `height` and `gender` as  explanatory variables and:
-  - get a summary of the model
-  - interpret the model coefficients
-  - plot the `fev` against `height` using color for gender,and overlay predicted values.
-  - assess model assumptions graphically. Is there any non-linearity?  If yes, does a polynomial improve the fit?  
+## Exercise 1 (cont)
   
-
-## Exercise 2
-  
-1. Using all cases in dataframe `d`, produce boxplots of:
+1. Produce boxplots of:
     - `fev` by `smoke`, and 
     - `age` by `smoke`. 
 
-1. Fit a model for `fev` with `smoke` as predictor; interpret the model coefficients.
+1. Fit a model for `fev` with `smoke` as predictor; what is the effect of `smoke` on `fev`?
 
-1. Fit a second model adding `age` as predictor; do you think `age` is a confounder for `smoke`?
+1. Fit a second model by adding `age` as predictor; what is now the effect of `smoke` on `fev`? 
+
+1. Do you think `age` is a confounder for `smoke`?
+
+
+## Exercise 2 (Recap)
+
+1. Subset non-smokers into a new dataframe to conduct the following analysis.
+
+1. Fit a model for `fev` with `height` and `gender` as predictors:
+    - get a summary of the model.
+    - interpret the model coefficients.
+    - plot the data and overlay the model.
+    - assess model assumptions graphically; is there any non-linearity?  
+    - does a polynomial for `height` improve the fit?  
+    - re-assess model assumptions; is there any remaining problem?
+    - fit a model with `log(fev)` as the dependent variable. 
+    - reassess model assumptions.
+    - plot the data and overlay the model.

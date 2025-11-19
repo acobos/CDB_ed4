@@ -3337,32 +3337,37 @@ d &lt;- lungcap %&gt;%
                         labels = c(&quot;no&quot;, &quot;yes&quot;))) %&gt;% 
   select(-ht)                                             # drops ht</pre>
 
-</article></slide><slide class=""><hgroup><h2>Exercise 1 (cont.)</h2></hgroup><article  id="exercise-1-cont.">
+</article></slide><slide class=""><hgroup><h2>Exercise 1 (cont)</h2></hgroup><article  id="exercise-1-cont">
 
 <ol>
-<li><p>Get a summary of the dataset variables</p></li>
-<li><p>Subset non-smokers into dataframe <code>dns</code></p></li>
-<li><p>Fit a model for FEV with <code>height</code> and <code>gender</code> as explanatory variables and:</p></li>
-</ol>
-
-<ul>
-<li>get a summary of the model</li>
-<li>interpret the model coefficients</li>
-<li>plot the <code>fev</code> against <code>height</code> using color for gender,and overlay predicted values.</li>
-<li>assess model assumptions graphically. Is there any non-linearity? If yes, does a polynomial improve the fit?</li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>Exercise 2</h2></hgroup><article  id="exercise-2">
-
-<ol>
-<li><p>Using all cases in dataframe <code>d</code>, produce boxplots of:</p>
+<li><p>Produce boxplots of:</p>
 
 <ul>
 <li><code>fev</code> by <code>smoke</code>, and</li>
 <li><code>age</code> by <code>smoke</code>.</li>
 </ul></li>
-<li><p>Fit a model for <code>fev</code> with <code>smoke</code> as predictor; interpret the model coefficients.</p></li>
-<li><p>Fit a second model adding <code>age</code> as predictor; do you think <code>age</code> is a confounder for <code>smoke</code>?</p></li>
+<li><p>Fit a model for <code>fev</code> with <code>smoke</code> as predictor; what is the effect of <code>smoke</code> on <code>fev</code>?</p></li>
+<li><p>Fit a second model by adding <code>age</code> as predictor; what is now the effect of <code>smoke</code> on <code>fev</code>?</p></li>
+<li><p>Do you think <code>age</code> is a confounder for <code>smoke</code>?</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Exercise 2 (Recap)</h2></hgroup><article  id="exercise-2-recap">
+
+<ol>
+<li><p>Subset non-smokers into a new dataframe to conduct the following analysis.</p></li>
+<li><p>Fit a model for <code>fev</code> with <code>height</code> and <code>gender</code> as predictors:</p>
+
+<ul>
+<li>get a summary of the model.</li>
+<li>interpret the model coefficients.</li>
+<li>plot the data and overlay the model.</li>
+<li>assess model assumptions graphically; is there any non-linearity?<br/></li>
+<li>does a polynomial for <code>height</code> improve the fit?<br/></li>
+<li>re-assess model assumptions; is there any remaining problem?</li>
+<li>fit a model with <code>log(fev)</code> as the dependent variable.</li>
+<li>reassess model assumptions.</li>
+<li>plot the data and overlay the model.</li>
+</ul></li>
 </ol></article></slide>
 
 
