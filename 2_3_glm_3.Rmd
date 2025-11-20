@@ -215,7 +215,9 @@ d <- lungcap %>%
 
 
 ## Exercise 1 (cont)
-  
+
+1. Describe variables in dataframe `d`.  
+
 1. Produce boxplots of:
     - `fev` by `smoke`, and 
     - `age` by `smoke`. 
@@ -232,9 +234,8 @@ d <- lungcap %>%
 1. Subset non-smokers into a new dataframe to conduct the following analysis.
 
 1. Fit a model for `fev` with `height` and `gender` as predictors:
-    - get a summary of the model.
-    - interpret the model coefficients.
-    - plot the data and overlay the model.
+    - get a summary of the model and interpret the model coefficients.
+    - plot the data along with the model.
     - assess model assumptions graphically; is there any non-linearity?  
     - does a polynomial for `height` improve the fit?  
     - re-assess model assumptions; is there any remaining problem?
