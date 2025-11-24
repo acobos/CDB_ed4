@@ -16,12 +16,17 @@ m2 <- glm(Survival ~ Class + Age + Sex, family=binomial, data=d)
 summary(m2)
 # class 3 has lowest coef, so lowest exp(b), lowest odds, and lowest prob
 
+
 # OR of survival for females vs males, given class and age
-exp(m2$coef)["Sexmale"]         # OR males vs females
-1 / exp(m2$coef)["Sexmale"]     # OR females vs males
+
+exp(coef(m2))["Sexmale"]         # OR males vs females
+
+1/exp(coef(m2))["Sexmale"]       # OR females vs males
 
 
 # Compare both models ----
 anova(m1,m2, test='LRT')
 # m2 has significantly better fit than m1, because it provides a 
 # significant reduction in deviance
+
+
