@@ -60,13 +60,20 @@ gf_boxplot(tbsa ~ inh_inj, data=d) + coord_flip()
 
 ## Predicted values
 
-Use `predict()` with option `type="response"` to get predicted probabilities
+```{r}
+predict(mod_si) %>% head()       # gives the logits!
+```
+
+\
+\
+
+to get predicted probabilities use argument `type="response"` 
 
 ```{r}
-d <- d %>% mutate(pred = predict(mod_si,  type = "response"))
-arrange(d, pred) %>% head(3)    
-arrange(d, pred) %>% tail(3)   
+predict(mod_si,  type = "response") %>% head()
 ```
+
+
 
 ## Assumptions 
 
@@ -84,7 +91,7 @@ arrange(d, pred) %>% tail(3)
 
 - Models with $\le$ 150/25 = 6 parameters are OK
 
-- Models with 6-15 parameters, care
+- Models with 7-15 parameters, care
 
 ## Events per parameter {.smaller}
 
@@ -95,15 +102,26 @@ mod <- glm(death ~ (inh_inj + flame) * (tbsa * age) + gender + race , data=d, fa
 round(summary(mod)$coef,4)
 ```
 
+
+
+## A model with six variables {.smaller}
+
+```{r}
+m6v <- glm(death ~ tbsa + inh_inj + flame + age + gender + race , 
+           data=d, family = binomial)
+summary(m6v)
+
+```
+
+
 ## Linearity on the logit scale
 
-```{r fig.align='center', fig.height=3.5}
-d <- d %>% 
-  mutate(pred = predict(mod,  type = "response"),
-         logit = log(pred / (1 - pred)))
+```{r fig.align='center', fig.width=10, fig.height=3.5}
 
-gf_point(logit ~ tbsa, data = d) %>%
-  gf_smooth(method = "loess") 
+library(patchwork)
+plot1 <- gf_point(predict(m6v) ~ tbsa, data = d) %>% gf_smooth(method = "loess")
+plot2 <- gf_point(predict(m6v) ~ age, data = d) %>% gf_smooth(method = "loess")
+plot1 + plot2
 
 ```
 
@@ -113,8 +131,8 @@ Cook's distance, standardized residuals and leverages
 
 ```{r fig.align='center', fig.height=3.5}
 par(mfrow = c(1,2))
-plot(mod,4)
-plot(mod,5)
+plot(m6v,4)
+plot(m6v,5)
 ```
 
 
