@@ -123,37 +123,40 @@ $H(t)$ does not have an easy interpretation.
 
 ## Advanced lung cancer
 
-Survival in `r nrow(survival::lung)` patients with advanced lung cancer from the North Central Cancer Treatment Group (Journal of Clinical Oncology. 12(3):601-7, 1994).  
-See `?lung` for more details.
+Survival in `r nrow(survival::lung)` advanced lung cancer patients (ee `?lung` for details).
 
 ```{r}
 
 library(survival)
-head(lung, 4)
+d <- lung %>% mutate(sex = factor(sex, levels=1:2, labels = c("male", "female")))
+head(d)
 
 ```
 
-<font size="4">
-- time: survival time in days  
-- status: censoring status 1=censored, 2=dead  
-- sex: Male=1 Female=2  
-</font>
+- **time**: $\qquad$ survival time in days 
+
+- **status**: $\quad$ censoring status (1=censored, 2=dead)  
+
 
 
 ## Survival objects {.smaller}
 
-The `Surv()` function creates suvival objects combining time and censoring/event information. You need to specify:
+The `Surv()` function creates suvival objects combining time and censoring/event information. 
 
-- `time`  (the follow-up time) 
+You need to specify two arguments:
 
-- `event` (see `?Surv` for allowed event codings)
+- `time`:  $\qquad$ the follow-up time 
 
-The result is a value for each subject: the time followed by + if censored
+- `event` $\qquad$ the event/censoring indicator (see `?Surv` for allowed event codings)
+
+\
+
+The result is a value for each subject: the `time` followed by + if censored
 
 
 ```{r}
 
-surv_obj <- Surv(time = lung$time, event = lung$status)        # creates a survival object
+surv_obj <- Surv(time = d$time, event = d$status)              # creates a survival object
                                                                
 head(surv_obj, 20)                                             # prints first 20 values                    
 
@@ -167,7 +170,7 @@ The `Survfit` function estimates survival using KM method. You need to specify a
 
 ```{r fig.align='center', fig.height=3, fig.width=5}
 
-km <- survfit(Surv(time = time, event = status) ~ 1, data = lung)           # KM estimation
+km <- survfit(Surv(time = time, event = status) ~ 1, data = d)              # KM estimation
 library(survminer)
 ggsurvplot(km, xlab = "Days", legend = "none",                              # plots  survfit objects
            censor=FALSE, surv.median.line = "hv")     
@@ -178,15 +181,20 @@ See `?ggsurvplot` for more customization options
 
 ## KM estimates {.smaller}
 
-- Get KM survival estimates at specific times using function `summary()` on a `survfit` object.
-- Get median survival time by printing the `survfit` object  
+Get median survival time by printing the `survfit` object 
 
 ```{r}
-
-summary(km, time = c(365, 730))     # survival estimates at specified times
 km                                  # median survival time
-
 ```
+
+\
+
+Get KM survival estimates at specific times using function `summary()` on a `survfit` object.
+
+```{r}
+summary(km, time = c(365, 730))     # survival estimates at specified time
+```
+
 
 ## KM estimates {.smaller}
 
@@ -205,8 +213,8 @@ quantile(km)
 To compare survival curves with this test, use function `survdiff()` on a formula, with the factor defining groups after the tilde.
 
 ```{r}
-lung <- lung %>% mutate(sex = factor(sex, levels=1:2, labels = c("male", "female")))
-survdiff(Surv(time, status) ~ sex, data = lung)      # note formula
+
+survdiff(Surv(time, status) ~ sex, data = d)      # note formula
 
 ```
 
