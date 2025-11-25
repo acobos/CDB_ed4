@@ -38,7 +38,7 @@ ggsurvplot(fit1, data = d, risk.table = TRUE)
 fit1
 
 # survival at 1 and 2 years
-summary(fit1, time = c(365, 730))
+summary(fit1, time = 365 * 1:2)
 
 # log-rank test
 survdiff(surv_object ~ rx, data = d) 
