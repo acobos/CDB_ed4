@@ -14,8 +14,6 @@ knitr::opts_chunk$set(echo = TRUE,
                       comment = NA,
                       message = FALSE)
 
-library(survival)
-library(survminer)
 ```
 
 ## The Cox _proportional hazards_ model (CPHM) {.smaller}
@@ -27,7 +25,7 @@ $h(t) \quad = \quad h_0(t) \quad e\ ^{\ \beta_1 x_1 + \ \beta_2 x_2 + ...+ \ \be
 
 </center>
 
-Models the _hazard function_ $h(t) = \frac{f(t)}{S(t)}$, the instantaneous _hazard_ of event at time $t$
+Models the _hazard function_ $h(t) = \frac{f(t)}{S(t)} = - \frac{d \log S(t)}{d t}$, the instantaneous _hazard_ of event at time $t$
 
 $h_0(t)$ is the baseline hazard (i.e., when all $x$'s are 0)
 
@@ -44,6 +42,21 @@ So that
 So, it is implicitely assumed that the _hazard ratio_ for _any time t_ is a constant, which does not depend on $t$
 
 
+## Data prep
+
+```{r}
+library(tidyverse)
+library(survival)
+d <- lung %>% 
+  mutate(status = factor(status, 
+                         levels = 1:2, 
+                         labels = c("censored", "dead")),
+         sex = factor(sex, 
+                      levels = 1:2, 
+                      labels = c("male", "female")))
+head(d)
+```
+
 
 
 ## Fitting a CPH model {.smaller}
@@ -52,7 +65,7 @@ Function `coxph()` fits CPH models
 
 ```{r}
 
-fit <- coxph(Surv(time, status) ~ sex, data = lung)
+fit <- coxph(Surv(time, status == "dead") ~ sex, data = d)
 fit
 
 ```
@@ -80,7 +93,7 @@ exp(confint(fit))   # gets the 95% CI for HR
 
 ```{r}
 
-fit <- coxph(Surv(time, status) ~ age + sex + ph.ecog, data = lung)
+fit <- coxph(Surv(time, status == "dead") ~ age + sex + ph.ecog, data = d)
 fit
 
 exp(coef(fit))                    # to get hazard ratios (HR)
@@ -92,7 +105,7 @@ exp(coef(fit))                    # to get hazard ratios (HR)
 
 ```{r fig.align='center'}
 
-ggforest(fit, data = lung, fontsize = 1)            # function ggforest() from package survminer
+survminer::ggforest(fit, data = d, fontsize = 1)            
 
 ```
 
