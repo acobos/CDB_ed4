@@ -110,13 +110,14 @@ survminer::ggforest(fit, data = d, fontsize = 1)
 ```
 
 
-## A better plot
+## A better plot {.smaller}
 
-```{r}
+```{r fig.align='center'}
 d$male <- as.numeric(d$sex == "male")
 fit <- coxph(Surv(time, status == "dead") ~ age + male + ph.ecog, data = d)
 survminer::ggforest(fit, data = d, fontsize = 1)   
 ```
+
 
 
 ## Assessing the PH assumption {.smaller}
