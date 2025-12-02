@@ -110,6 +110,15 @@ survminer::ggforest(fit, data = d, fontsize = 1)
 ```
 
 
+## A better plot
+
+```{r}
+d$male <- as.numeric(d$sex == "male")
+fit <- coxph(Surv(time, status == "dead") ~ age + male + ph.ecog, data = d)
+survminer::ggforest(fit, data = d, fontsize = 1)   
+```
+
+
 ## Assessing the PH assumption {.smaller}
 
 A test for deviation from proportional hazards can be done with function `cox.zph` 
